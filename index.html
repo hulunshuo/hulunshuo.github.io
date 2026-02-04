@@ -10,7 +10,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- 引入Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- 自定义Tailwind配置 -->
     <script>
         tailwind.config = {
@@ -695,6 +698,7 @@
                     </table>
                 </div>
                 
+                
                 <!-- 灌溉方式说明 -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="border border-gray-200 rounded-lg p-4">
@@ -743,6 +747,613 @@
                 </div>
             </div>
         </section>
+        <!-- 在棉花灌溉方案详情后面添加机器学习按钮和新的ML农作物页面 -->
+
+<!-- 机器学习按钮（放在棉花按钮旁边） -->
+<button class="crop-btn bg-gradient-ml text-white px-4 py-2 rounded-lg hover:opacity-90 transition" data-crop="ml-crop">
+    <i class="fa-solid fa-brain mr-2"></i>机器学习
+</button>
+
+<!-- 新的ML农作物灌溉方案详情（放在棉花方案后面） -->
+<div id="ml-crop-info" class="crop-info hidden bg-white rounded-xl p-6 card-shadow">
+    <div class="flex flex-col md:flex-row justify-between mb-6">
+        <div>
+            <h3 class="text-xl font-bold mb-2">机器学习智能灌溉方案</h3>
+            <p class="text-gray-500">状态：待学习 | 创建新农作物灌溉方案</p>
+        </div>
+        <button onclick="openMLPage()" class="mt-4 md:mt-0 bg-gradient-ml hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center self-start transition">
+            <i class="fa-solid fa-plus mr-2"></i>创建新农作物
+        </button>
+    </div>
+    
+    <!-- 机器学习流程说明 -->
+    <div class="mb-8">
+        <div class="bg-gradient-ml/10 border border-ml/20 rounded-lg p-6 mb-6">
+            <h4 class="font-bold text-ml mb-4 flex items-center">
+                <i class="fa-solid fa-brain mr-2"></i>机器学习灌溉方案生成流程
+            </h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="w-12 h-12 rounded-full bg-ml/10 flex items-center justify-center text-ml mx-auto mb-2">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <h5 class="font-bold text-sm mb-1">1. 选择作物</h5>
+                    <p class="text-xs text-gray-600">输入新作物信息</p>
+                </div>
+                
+                <div class="flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-right text-ml text-lg"></i>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="w-12 h-12 rounded-full bg-ml/10 flex items-center justify-center text-ml mx-auto mb-2">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <h5 class="font-bold text-sm mb-1">2. 收集数据</h5>
+                    <p class="text-xs text-gray-600">传感器或导入数据</p>
+                </div>
+                
+                <div class="flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-right text-ml text-lg"></i>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="w-12 h-12 rounded-full bg-ml/10 flex items-center justify-center text-ml mx-auto mb-2">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <h5 class="font-bold text-sm mb-1">3. AI训练</h5>
+                    <p class="text-xs text-gray-600">机器学习模型训练</p>
+                </div>
+                
+                <div class="flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-right text-ml text-lg"></i>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="w-12 h-12 rounded-full bg-ml/10 flex items-center justify-center text-ml mx-auto mb-2">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h5 class="font-bold text-sm mb-1">4. 生成方案</h5>
+                    <p class="text-xs text-gray-600">输出灌溉方案</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 获取传感器数据按钮 -->
+                <div onclick="showMLSection('sensor')" class="bg-white border border-ml/30 hover:border-ml rounded-lg p-4 cursor-pointer transition">
+                    <div class="flex items-center mb-2">
+                        <div class="w-10 h-10 rounded-full bg-ml/10 flex items-center justify-center text-ml mr-3">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-bold">获取传感器数据</h5>
+                            <p class="text-sm text-gray-600">实时采集田间数据</p>
+                        </div>
+                    </div>
+                    <ul class="text-xs text-gray-600 space-y-1 mt-2">
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>自动连接田间传感器</li>
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>实时数据监测</li>
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>自动数据清洗</li>
+                    </ul>
+                </div>
+                
+                <!-- 导入数据按钮 -->
+                <div onclick="showMLSection('import')" class="bg-white border border-ml/30 hover:border-ml rounded-lg p-4 cursor-pointer transition">
+                    <div class="flex items-center mb-2">
+                        <div class="w-10 h-10 rounded-full bg-ml/10 flex items-center justify-center text-ml mr-3">
+                            <i class="fa-solid fa-file-import"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-bold">导入数据文件</h5>
+                            <p class="text-sm text-gray-600">批量处理历史数据</p>
+                        </div>
+                    </div>
+                    <ul class="text-xs text-gray-600 space-y-1 mt-2">
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>支持CSV/Excel/JSON</li>
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>自动数据格式识别</li>
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>批量数据处理</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 传感器数据部分（默认隐藏） -->
+        <div id="ml-sensor-section" class="hidden">
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold mb-4 flex items-center">
+                    <i class="fa-solid fa-satellite-dish text-ml mr-2"></i>传感器数据采集
+                </h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-sm text-gray-600 mb-1">可用传感器</p>
+                        <p class="font-bold text-ml">8台</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-sm text-gray-600 mb-1">连接状态</p>
+                        <p class="font-bold text-green-600">在线</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-sm text-gray-600 mb-1">数据频率</p>
+                        <p class="font-bold">10分钟/次</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between bg-white p-3 rounded border">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-ml/10 flex items-center justify-center text-ml mr-2">
+                                <i class="fa-solid fa-droplet"></i>
+                            </div>
+                            <span>土壤湿度传感器</span>
+                        </div>
+                        <span class="text-sm text-green-600">已连接</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between bg-white p-3 rounded border">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-ml/10 flex items-center justify-center text-ml mr-2">
+                                <i class="fa-solid fa-temperature-full"></i>
+                            </div>
+                            <span>温度传感器</span>
+                        </div>
+                        <span class="text-sm text-green-600">已连接</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between bg-white p-3 rounded border">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-ml/10 flex items-center justify-center text-ml mr-2">
+                                <i class="fa-solid fa-wind"></i>
+                            </div>
+                            <span>空气湿度传感器</span>
+                        </div>
+                        <span class="text-sm text-green-600">已连接</span>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button onclick="startMLDataCollection()" class="w-full bg-ml hover:bg-ml/90 text-white py-2 rounded-lg font-medium">
+                        <i class="fa-solid fa-play mr-2"></i>开始采集数据
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 导入数据部分（默认隐藏） -->
+        <div id="ml-import-section" class="hidden">
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold mb-4 flex items-center">
+                    <i class="fa-solid fa-file-import text-ml mr-2"></i>数据文件导入
+                </h4>
+                
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
+                    <div class="w-16 h-16 rounded-full bg-ml/10 flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-cloud-upload-alt text-2xl text-ml"></i>
+                    </div>
+                    <h5 class="font-bold mb-2">拖放文件到此处</h5>
+                    <p class="text-gray-600 mb-4">支持 CSV, Excel, JSON 格式</p>
+                    <button onclick="document.getElementById('ml-file-input').click()" class="bg-ml hover:bg-ml/90 text-white px-4 py-2 rounded-lg">
+                        <i class="fa-solid fa-folder-open mr-2"></i>选择文件
+                    </button>
+                    <input type="file" id="ml-file-input" class="hidden" onchange="handleMLFileSelect(event)">
+                </div>
+                
+                <div id="ml-file-info" class="hidden">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-medium">已选择文件：</span>
+                            <span id="ml-file-name" class="text-ml"></span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span>文件大小：</span>
+                            <span id="ml-file-size"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>数据行数：</span>
+                            <span id="ml-data-rows" class="font-bold">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button onclick="startMLTraining()" class="w-full bg-ml hover:bg-ml/90 text-white py-2 rounded-lg font-medium">
+                            <i class="fa-solid fa-brain mr-2"></i>开始机器学习训练
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 机器学习训练进度（默认隐藏） -->
+        <div id="ml-training-progress" class="hidden">
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold mb-4 flex items-center">
+                    <i class="fa-solid fa-cogs text-ml mr-2"></i>机器学习训练进度
+                </h4>
+                
+                <div class="mb-4">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-gray-700">训练进度</span>
+                        <span id="ml-progress-percent" class="font-bold text-ml">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="ml-progress-fill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div id="ml-training-logs" class="space-y-2 mb-4">
+                    <div class="text-sm text-gray-600 flex items-center">
+                        <i class="fa-solid fa-circle text-xs text-gray-400 mr-2"></i>
+                        <span>等待开始训练...</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="startMLTrainingProcess()" id="ml-start-btn" class="bg-ml hover:bg-ml/90 text-white py-2 rounded-lg font-medium">
+                        <i class="fa-solid fa-play mr-2"></i>开始训练
+                    </button>
+                    <button onclick="resetMLTraining()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg font-medium">
+                        <i class="fa-solid fa-redo mr-2"></i>重置
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 灌溉方案预览（默认隐藏） -->
+    <div id="ml-irrigation-preview" class="hidden">
+        <div class="overflow-x-auto mb-6">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="border-b">
+                        <th class="py-3 px-4 text-left text-gray-500">灌溉参数</th>
+                        <th class="py-3 px-4 text-left text-gray-500">推荐值</th>
+                        <th class="py-3 px-4 text-left text-gray-500">范围</th>
+                        <th class="py-3 px-4 text-left text-gray-500">说明</th>
+                    </tr>
+                </thead>
+                <tbody id="ml-irrigation-table">
+                    <!-- 动态生成表格行 -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- 灌溉方式说明 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold mb-2 flex items-center">
+                    <i class="fa-solid fa-check-circle text-brand mr-2"></i>AI推荐灌溉方式
+                </h4>
+                <p class="text-gray-600" id="ml-irrigation-method">等待生成...</p>
+            </div>
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold mb-2 flex items-center">
+                    <i class="fa-solid fa-exclamation-circle text-warning mr-2"></i>AI优化建议
+                </h4>
+                <p class="text-gray-600" id="ml-optimization-tips">等待生成...</p>
+            </div>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <button onclick="saveMLIrrigationPlan()" class="bg-ml hover:bg-ml/90 text-white px-6 py-3 rounded-lg font-medium">
+                <i class="fa-solid fa-save mr-2"></i>保存灌溉方案
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 在页面JavaScript部分添加以下函数 -->
+<script>
+// 添加CSS样式
+const style = document.createElement('style');
+style.textContent = `
+    .bg-gradient-ml {
+        background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+    }
+    .progress-bar {
+        height: 8px;
+        border-radius: 4px;
+        background: #E5E7EB;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #8B5CF6, #6366F1);
+        transition: width 0.5s ease;
+    }
+`;
+document.head.appendChild(style);
+
+// 打开机器学习页面
+function openMLPage() {
+    window.open('machine-learning.html', '_blank');
+}
+
+// 显示机器学习部分
+function showMLSection(type) {
+    // 隐藏所有ML部分
+    document.getElementById('ml-sensor-section').classList.add('hidden');
+    document.getElementById('ml-import-section').classList.add('hidden');
+    document.getElementById('ml-training-progress').classList.add('hidden');
+    document.getElementById('ml-irrigation-preview').classList.add('hidden');
+    
+    // 显示选中的部分
+    if (type === 'sensor') {
+        document.getElementById('ml-sensor-section').classList.remove('hidden');
+    } else if (type === 'import') {
+        document.getElementById('ml-import-section').classList.remove('hidden');
+    }
+}
+
+// 处理文件选择
+function handleMLFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const fileInfo = document.getElementById('ml-file-info');
+        const fileName = document.getElementById('ml-file-name');
+        const fileSize = document.getElementById('ml-file-size');
+        const dataRows = document.getElementById('ml-data-rows');
+        
+        // 显示文件信息
+        fileName.textContent = file.name;
+        fileSize.textContent = (file.size / 1024).toFixed(2) + ' KB';
+        dataRows.textContent = Math.floor(Math.random() * 1000) + 500; // 模拟数据行数
+        
+        fileInfo.classList.remove('hidden');
+        
+        // 显示成功通知
+        showNotification('文件上传成功: ' + file.name, 'success');
+    }
+}
+
+// 开始数据采集
+function startMLDataCollection() {
+    // 显示训练进度部分
+    document.getElementById('ml-training-progress').classList.remove('hidden');
+    document.getElementById('ml-sensor-section').classList.add('hidden');
+    
+    // 开始模拟训练
+    simulateMLTraining('sensor');
+}
+
+// 开始机器学习训练
+function startMLTraining() {
+    // 显示训练进度部分
+    document.getElementById('ml-training-progress').classList.remove('hidden');
+    document.getElementById('ml-import-section').classList.add('hidden');
+    
+    // 开始模拟训练
+    simulateMLTraining('import');
+}
+
+// 模拟机器学习训练
+function simulateMLTraining(type) {
+    const progressPercent = document.getElementById('ml-progress-percent');
+    const progressFill = document.getElementById('ml-progress-fill');
+    const trainingLogs = document.getElementById('ml-training-logs');
+    const startBtn = document.getElementById('ml-start-btn');
+    
+    // 清空日志
+    trainingLogs.innerHTML = '';
+    
+    // 禁用开始按钮
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<i class="fa-solid fa-cog fa-spin mr-2"></i>训练中';
+    startBtn.classList.remove('bg-ml', 'hover:bg-ml/90');
+    startBtn.classList.add('bg-gray-400');
+    
+    const trainingSteps = [
+        { progress: 10, message: '正在初始化机器学习环境...' },
+        { progress: 20, message: '加载训练数据...' },
+        { progress: 30, message: '数据预处理中...' },
+        { progress: 40, message: '特征工程处理...' },
+        { progress: 50, message: '训练随机森林模型...' },
+        { progress: 60, message: '模型交叉验证...' },
+        { progress: 70, message: '参数调优优化...' },
+        { progress: 80, message: '模型性能评估...' },
+        { progress: 90, message: '生成灌溉方案...' },
+        { progress: 100, message: '训练完成！' }
+    ];
+    
+    let currentStep = 0;
+    
+    function updateProgress() {
+        if (currentStep < trainingSteps.length) {
+            const step = trainingSteps[currentStep];
+            
+            // 更新进度条
+            progressPercent.textContent = step.progress + '%';
+            progressFill.style.width = step.progress + '%';
+            
+            // 添加日志
+            const logEntry = document.createElement('div');
+            logEntry.className = 'text-sm text-gray-600 flex items-center';
+            logEntry.innerHTML = `
+                <i class="fa-solid fa-circle text-xs ${step.progress === 100 ? 'text-green-500' : 'text-gray-400'} mr-2"></i>
+                <span>${step.message}</span>
+            `;
+            trainingLogs.appendChild(logEntry);
+            
+            // 滚动到最新日志
+            logEntry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            currentStep++;
+            
+            // 如果是最后一步，显示结果
+            if (step.progress === 100) {
+                setTimeout(() => {
+                    generateMLIrrigationPlan(type);
+                }, 1000);
+            } else {
+                // 继续下一步
+                setTimeout(updateProgress, 800 + Math.random() * 400);
+            }
+        }
+    }
+    
+    // 开始更新进度
+    setTimeout(updateProgress, 500);
+}
+
+// 开始训练过程
+function startMLTrainingProcess() {
+    // 这里可以添加实际开始训练的逻辑
+    // 现在先模拟训练
+    simulateMLTraining('manual');
+}
+
+// 重置训练
+function resetMLTraining() {
+    const progressPercent = document.getElementById('ml-progress-percent');
+    const progressFill = document.getElementById('ml-progress-fill');
+    const trainingLogs = document.getElementById('ml-training-logs');
+    const startBtn = document.getElementById('ml-start-btn');
+    
+    // 重置进度
+    progressPercent.textContent = '0%';
+    progressFill.style.width = '0%';
+    
+    // 重置日志
+    trainingLogs.innerHTML = `
+        <div class="text-sm text-gray-600 flex items-center">
+            <i class="fa-solid fa-circle text-xs text-gray-400 mr-2"></i>
+            <span>等待开始训练...</span>
+        </div>
+    `;
+    
+    // 启用开始按钮
+    startBtn.disabled = false;
+    startBtn.innerHTML = '<i class="fa-solid fa-play mr-2"></i>开始训练';
+    startBtn.classList.remove('bg-gray-400');
+    startBtn.classList.add('bg-ml', 'hover:bg-ml/90');
+}
+
+// 生成灌溉方案
+function generateMLIrrigationPlan(type) {
+    // 模拟作物名称
+    const cropNames = ['咖啡树', '甘蔗', '茶叶', '橡胶树', '中药材'];
+    const cropName = cropNames[Math.floor(Math.random() * cropNames.length)];
+    
+    // 更新标题
+    const title = document.querySelector('#ml-crop-info .text-xl');
+    if (title) {
+        title.textContent = cropName + '智能灌溉方案';
+    }
+    
+    const subtitle = document.querySelector('#ml-crop-info .text-gray-500');
+    if (subtitle) {
+        subtitle.textContent = 'AI生成方案 | 准确率：' + (85 + Math.random() * 10).toFixed(1) + '%';
+    }
+    
+    // 生成灌溉参数表格
+    const tableBody = document.getElementById('ml-irrigation-table');
+    tableBody.innerHTML = '';
+    
+    const irrigationParams = [
+        { param: '土壤湿度', value: (65 + Math.random() * 10).toFixed(1) + '%', range: '60-75%', desc: 'AI推荐最优湿度' },
+        { param: '灌溉频率', value: '每' + (3 + Math.floor(Math.random() * 3)) + '天一次', range: '每2-5天一次', desc: '基于作物需水规律' },
+        { param: '单次灌溉量', value: (25 + Math.random() * 15).toFixed(1) + 'm³/亩', range: '20-40m³/亩', desc: 'AI计算最优水量' },
+        { param: '灌溉时间', value: '06:00-08:00', range: '05:00-09:00', desc: '减少蒸发损失' },
+        { param: '水温要求', value: (18 + Math.random() * 5).toFixed(1) + '°C', range: '15-25°C', desc: '促进根系吸收' },
+        { param: 'pH值范围', value: (6.0 + Math.random() * 0.8).toFixed(1), range: '5.8-7.0', desc: '适宜生长环境' }
+    ];
+    
+    irrigationParams.forEach(param => {
+        const row = document.createElement('tr');
+        row.className = 'border-b';
+        row.innerHTML = `
+            <td class="py-3 px-4 font-medium">${param.param}</td>
+            <td class="py-3 px-4 text-ml font-bold">${param.value}</td>
+            <td class="py-3 px-4 text-gray-600">${param.range}</td>
+            <td class="py-3 px-4 text-gray-600 text-sm">${param.desc}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    // 生成灌溉方式说明
+    const irrigationMethods = [
+        '采用滴灌+微喷结合，滴灌为主提供根系水分，微喷调节田间小气候。',
+        '推荐分区灌溉技术，根据土壤质地差异调整各区灌溉量和频率。',
+        '采用水肥一体化技术，精准控制水分和养分，提高资源利用效率。',
+        '结合智能控制，实现按需精准灌溉，减少水分浪费。'
+    ];
+    
+    const optimizationTips = [
+        'AI建议增加有机肥使用，提高土壤保水能力。',
+        '建议安装土壤湿度传感器，实时监测调整灌溉策略。',
+        '结合天气预报数据，提前调整灌溉计划。',
+        '注意排水系统维护，防止积水影响作物生长。'
+    ];
+    
+    document.getElementById('ml-irrigation-method').textContent = 
+        irrigationMethods[Math.floor(Math.random() * irrigationMethods.length)];
+    
+    document.getElementById('ml-optimization-tips').textContent = 
+        optimizationTips[Math.floor(Math.random() * optimizationTips.length)];
+    
+    // 显示灌溉方案预览
+    document.getElementById('ml-irrigation-preview').classList.remove('hidden');
+    document.getElementById('ml-training-progress').classList.add('hidden');
+    
+    // 滚动到预览部分
+    document.getElementById('ml-irrigation-preview').scrollIntoView({ behavior: 'smooth' });
+    
+    // 显示成功通知
+    showNotification('机器学习灌溉方案生成成功！', 'success');
+}
+
+// 保存灌溉方案
+function saveMLIrrigationPlan() {
+    const cropName = document.querySelector('#ml-crop-info .text-xl').textContent.replace('智能灌溉方案', '').trim();
+    
+    // 模拟保存过程
+    const saveBtn = document.querySelector('#ml-irrigation-preview button');
+    const originalText = saveBtn.innerHTML;
+    
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>保存中...';
+    saveBtn.disabled = true;
+    
+    setTimeout(() => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+        
+        showNotification(`${cropName}灌溉方案已保存到系统！`, 'success');
+        
+        // 3秒后刷新页面显示新的作物
+        setTimeout(() => {
+            location.reload();
+        }, 3000);
+    }, 1500);
+}
+
+// 显示通知
+function showNotification(message, type = 'info') {
+    const typeClasses = {
+        success: 'bg-green-100 border-green-400 text-green-700',
+        error: 'bg-red-100 border-red-400 text-red-700',
+        warning: 'bg-yellow-100 border-yellow-400 text-yellow-700',
+        info: 'bg-blue-100 border-blue-400 text-blue-700'
+    };
+    
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-4 py-3 rounded-lg border shadow-lg z-50 ${typeClasses[type]}`;
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fa-solid fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'} mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 3秒后自动消失
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+</script>
+        
         
         <!-- 硬件监控 -->
         <section id="hardware" class="mb-12">
@@ -754,7 +1365,7 @@
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <h3 class="font-bold">土壤湿度传感器 #001</h3>
-                            <p class="text-gray-500 text-sm">麦田区域 | 安装时间：2024-01-15</p>
+                            <p class="text-gray-500 text-sm">麦田区域 | 安装时间：2026-01-15</p>
                         </div>
                         <span class="status-online px-2 py-1 rounded-full text-sm">在线</span>
                     </div>
@@ -828,7 +1439,7 @@
                     <div class="flex justify-between items-start mb-4">
                         <div>
                             <h3 class="font-bold">智能水泵 #001</h3>
-                            <p class="text-gray-500 text-sm">北灌溉区 | 安装时间：2024-01-12</p>
+                            <p class="text-gray-500 text-sm">北灌溉区 | 安装时间：2026-01-12</p>
                         </div>
                         <span class="status-warning px-2 py-1 rounded-full text-sm">预警</span>
                     </div>
@@ -860,19 +1471,23 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- 设备地图 -->
-            <div class="mt-8 bg-white rounded-xl p-6 card-shadow">
-                <h3 class="text-lg font-bold mb-4">设备分布地图</h3>
-                <div class="h-80 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <div class="text-center">
-                        <i class="fa-solid fa-map-location-dot text-5xl text-gray-400 mb-4"></i>
-                        <p class="text-gray-500">乡业绿禾灌溉系统 - 设备分布地图可视化界面</p>
-                        <p class="text-gray-400 text-sm mt-2">点击设备图标查看详细信息</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+
+           <!-- 设备地图 -->
+ <div class="mt-8 bg-white rounded-xl p-6 card-shadow">
+    <h3 class="text-lg font-bold mb-4">设备分布地图</h3>
+    <div id="deviceMap" class="h-80 rounded-lg"></div>
+    <div class="mt-4 flex space-x-2">
+        <button id="zoomInBtn" class="bg-brand/10 hover:bg-brand/20 text-brand px-3 py-2 rounded-lg text-sm transition">
+            <i class="fa-solid fa-magnifying-glass-plus mr-1"></i>放大
+        </button>
+        <button id="zoomOutBtn" class="bg-brand/10 hover:bg-brand/20 text-brand px-3 py-2 rounded-lg text-sm transition">
+            <i class="fa-solid fa-magnifying-glass-minus mr-1"></i>缩小
+        </button>
+        <button id="resetMapBtn" class="bg-brand/10 hover:bg-brand/20 text-brand px-3 py-2 rounded-lg text-sm transition">
+            <i class="fa-solid fa-location-crosshairs mr-1"></i>重置视图
+        </button>
+    </div>
+ </div>
         
         <!-- 智能建议 -->
         <section id="suggestion" class="mb-12">
@@ -882,7 +1497,7 @@
                 <div class="flex flex-col md:flex-row justify-between mb-6">
                     <div>
                         <h3 class="text-xl font-bold mb-2">乡业绿禾 - 基于大数据分析的灌溉建议</h3>
-                        <p class="text-gray-500">更新时间：2024-05-20 08:30 | 分析数据量：128,546条</p>
+                        <p class="text-gray-500">更新时间：2026-02-10 08:30 | 分析数据量：128,546条</p>
                     </div>
                     <button class="mt-4 md:mt-0 bg-brand hover:bg-brand/90 text-white px-4 py-2 rounded-lg flex items-center self-start transition">
                         <i class="fa-solid fa-microchip mr-2"></i>重新分析
@@ -1300,12 +1915,156 @@
         
         // 每30秒更新一次实时数据
         setInterval(updateRealTimeData, 30000);
+        // 在 updateRealTimeData 函数后面添加以下代码：
+
+// ==================== 刷新数据功能 ====================
+
+// 刷新所有数据
+function refreshAllData() {
+    // 显示加载状态
+    const refreshBtn = document.querySelector('button:has(.fa-refresh)');
+    if (refreshBtn) {
+        const originalText = refreshBtn.innerHTML;
+        refreshBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>刷新中...';
+        refreshBtn.disabled = true;
+        
+        // 模拟API调用延迟
+        setTimeout(() => {
+            // 1. 调用现有的updateRealTimeData函数
+            updateRealTimeData();
+            
+            // 2. 额外的小范围数据修改
+            // 土壤湿度：在±1%范围内变化
+            const soilMoistureElement = document.getElementById('soilMoisture');
+            if (soilMoistureElement) {
+                const currentMoisture = parseFloat(soilMoistureElement.textContent);
+                const randomChange = (Math.random() - 0.5) * 2; // -1到1之间的随机变化
+                const newMoisture = Math.max(60, Math.min(78, currentMoisture + randomChange));
+                soilMoistureElement.textContent = newMoisture.toFixed(1) + '%';
+                
+                // 更新变化百分比显示
+                const changeElement = soilMoistureElement.closest('.bg-white').querySelector('.text-brand');
+                if (changeElement) {
+                    const changeValue = randomChange > 0 ? 
+                        `+${Math.abs(randomChange).toFixed(1)}%` : 
+                        `-${Math.abs(randomChange).toFixed(1)}%`;
+                    const arrowIcon = randomChange > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+                    changeElement.innerHTML = `<i class="fa-solid ${arrowIcon} mr-1"></i> ${changeValue}`;
+                }
+            }
+            
+            // 3. 环境温度：在±0.3°C范围内变化
+            const tempElement = document.getElementById('temp');
+            if (tempElement) {
+                const currentTemp = parseFloat(tempElement.textContent);
+                const randomChange = (Math.random() - 0.5) * 0.6; // -0.3到0.3之间的随机变化
+                const newTemp = Math.max(24, Math.min(28, currentTemp + randomChange));
+                tempElement.textContent = newTemp.toFixed(1) + '°C';
+                
+                // 更新变化百分比显示
+                const changeElement = tempElement.closest('.bg-white').querySelector('.text-danger');
+                if (changeElement) {
+                    const changeValue = randomChange > 0 ? 
+                        `+${Math.abs(randomChange).toFixed(1)}°C` : 
+                        `-${Math.abs(randomChange).toFixed(1)}°C`;
+                    const arrowIcon = randomChange > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+                    changeElement.innerHTML = `<i class="fa-solid ${arrowIcon} mr-1"></i> ${changeValue}`;
+                }
+            }
+            
+            // 4. 空气湿度：在±1.5%范围内变化
+            const airHumidityElement = document.getElementById('airHumidity');
+            if (airHumidityElement) {
+                const currentHumidity = parseFloat(airHumidityElement.textContent);
+                const randomChange = (Math.random() - 0.5) * 3; // -1.5到1.5之间的随机变化
+                const newHumidity = Math.max(40, Math.min(55, currentHumidity + randomChange));
+                airHumidityElement.textContent = newHumidity.toFixed(1) + '%';
+                
+                // 更新变化百分比显示
+                const changeElement = airHumidityElement.closest('.bg-white').querySelector('.text-danger');
+                if (changeElement) {
+                    const changeValue = randomChange > 0 ? 
+                        `+${Math.abs(randomChange).toFixed(1)}%` : 
+                        `-${Math.abs(randomChange).toFixed(1)}%`;
+                    const arrowIcon = randomChange > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+                    changeElement.innerHTML = `<i class="fa-solid ${arrowIcon} mr-1"></i> ${changeValue}`;
+                }
+            }
+            
+            // 5. 更新灌溉运行时间
+            const irrigationElements = document.querySelectorAll('.text-gray-500');
+            irrigationElements.forEach(element => {
+                if (element.textContent.includes('今日已运行')) {
+                    const match = element.textContent.match(/\d+\.?\d*/);
+                    if (match) {
+                        const currentHours = parseFloat(match[0]);
+                        const newHours = Math.min(12, currentHours + Math.random() * 0.1); // 增加0-0.1小时
+                        element.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> 今日已运行: ${newHours.toFixed(1)}小时`;
+                    }
+                }
+            });
+            
+            // 6. 恢复按钮状态
+            refreshBtn.innerHTML = originalText;
+            refreshBtn.disabled = false;
+            
+            // 7. 显示刷新完成通知
+            showRefreshNotification('数据刷新完成！');
+        }, 800); // 0.8秒延迟模拟网络请求
+    }
+ }
+
+ // 显示刷新通知
+ function showRefreshNotification(message) {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ' +
+                           'bg-green-100 border-green-400 text-green-700 border ' +
+                           'transform transition-all duration-300 translate-x-0 opacity-100';
+    
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fa-solid fa-check-circle mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 3秒后自动消失
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    }, 3000);
+ }
+
+ // 为刷新按钮绑定事件
+ function bindRefreshButton() {
+    const refreshBtn = document.querySelector('button:has(.fa-refresh)');
+    if (refreshBtn && !refreshBtn.hasAttribute('data-refresh-bound')) {
+        refreshBtn.setAttribute('data-refresh-bound', 'true');
+        refreshBtn.addEventListener('click', refreshAllData);
+    }
+ }
+
+ // 页面加载完成后绑定事件
+ if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindRefreshButton);
+ } else {
+    bindRefreshButton();
+ }
     </script>
     <!-- 引入用户数据管理系统 -->
-<script src="userData.js"></script>
+ <script src="userData.js"></script>
 
-<!-- 用户交互功能 -->
-<script>
+ <!-- 用户交互功能 -->
+ <script>
     // 初始化用户状态
     function initUserState() {
         const guestState = document.getElementById('guestState');
