@@ -263,6 +263,12 @@
                 <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg" data-crop="vegetable">蔬菜</button>
                 <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg" data-crop="fruit">果树</button>
                 <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg" data-crop="cotton">棉花</button>
+                <button class="crop-btn bg-gradient-ml text-white px-4 py-2 rounded-lg hover:opacity-90 transition" data-crop="ml-crop">
+                <i class="fa-solid fa-brain mr-2"></i>机器学习
+                </button>
+                <button onclick="window.open('clustering-fuzzy.html', '_blank')" class="crop-btn bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:opacity-90 transition">
+                <i class="fa-solid fa-sitemap mr-2"></i>聚类模糊控制
+                </button>
             </div>
             
             <!-- 小麦灌溉方案详情 -->
@@ -747,16 +753,10 @@
                 </div>
             </div>
         </section>
-        <!-- 在棉花灌溉方案详情后面添加机器学习按钮和新的ML农作物页面 -->
-
-<!-- 机器学习按钮（放在棉花按钮旁边） -->
-<button class="crop-btn bg-gradient-ml text-white px-4 py-2 rounded-lg hover:opacity-90 transition" data-crop="ml-crop">
-    <i class="fa-solid fa-brain mr-2"></i>机器学习
-</button>
-
-<!-- 新的ML农作物灌溉方案详情（放在棉花方案后面） -->
-<div id="ml-crop-info" class="crop-info hidden bg-white rounded-xl p-6 card-shadow">
-    <div class="flex flex-col md:flex-row justify-between mb-6">
+        <!-- 机器学习智能灌溉方案 -->
+        <section id="ml-irrigation" class="mb-12">
+     <div id="ml-crop-info" class="crop-info hidden bg-white rounded-xl p-6 card-shadow">
+      <div class="flex flex-col md:flex-row justify-between mb-6">
         <div>
             <h3 class="text-xl font-bold mb-2">机器学习智能灌溉方案</h3>
             <p class="text-gray-500">状态：待学习 | 创建新农作物灌溉方案</p>
