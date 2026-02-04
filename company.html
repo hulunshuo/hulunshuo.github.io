@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - 乡业绿禾灌溉科技有限公司</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#16A34A',
+                        secondary: '#0EA5E9',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        brand: '#0F766E'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-shadow {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .bg-gradient-brand {
+                background: linear-gradient(135deg, #0F766E 0%, #16A34A 100%);
+            }
+            .hover-lift {
+                transition: transform 0.3s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white card-shadow sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <nav class="flex justify-between items-center py-4">
+                <!-- Logo区域 -->
+                <a href="index.html" class="flex items-center space-x-3">
+                    <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ae10c927211a4d40a7ce83dc0d6d62b0.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260203224317F56453BF2EEA2D01E594&rrcfp=dafada99&x-expires=2086353797&x-signature=eTC2QeGqQdxxHpf5UMQFHG7AwFk%3D" 
+                         alt="乡业绿禾灌溉科技有限公司" 
+                         class="h-12 w-auto rounded">
+                    <div>
+                        <h1 class="text-xl font-bold text-brand">乡业绿禾</h1>
+                        <p class="text-xs text-gray-500">灌溉科技有限公司</p>
+                    </div>
+                </a>
+                
+                <!-- 返回主页按钮 -->
+                <a href="index.html" class="bg-brand hover:bg-brand/90 text-white px-4 py-2 rounded-lg flex items-center transition">
+                    <i class="fa-solid fa-home mr-2"></i>返回系统
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-1">
+        <!-- 公司横幅 -->
+        <section class="bg-gradient-brand text-white py-16">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">乡业绿禾灌溉科技有限公司</h1>
+                <p class="text-xl md:text-2xl opacity-90">科技赋能，节水兴农</p>
+                <p class="mt-4 text-lg opacity-80">致力于打造最智能、最高效的农业灌溉解决方案</p>
+            </div>
+        </section>
+
+        <!-- 公司简介 -->
+        <section class="py-16">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 md:p-12 card-shadow">
+                        <h2 class="text-3xl font-bold text-brand mb-8 text-center">公司简介</h2>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-bullseye mr-3"></i>发展理念
+                                </h3>
+                                <p class="text-gray-700 text-lg leading-relaxed">
+                                    <span class="font-bold">乡业绿禾灌溉科技有限公司是一家拟建中的企业</span>，秉承着
+                                    <span class="text-brand font-semibold">"科技赋能，节水兴农"</span>的发展理念；
+                                    奉行<span class="text-brand font-semibold">"精准灌溉、绿色生态、智慧农业"</span>的核心价值观；
+                                    坚持以技术创新为先导，走产学研用深度融合的发展道路；以高效的管理为基础，达到经济效益、社会效益、生态效益协同提升的效果。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-industry mr-3"></i>市场背景
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    在农业现代化转型与水资源集约利用的双重需求驱动下，传统农业灌溉模式的短板日益凸显。
+                                    <span class="font-semibold">我国农业用水占总用水量的60%以上，但灌溉利用率仅为40%左右</span>，
+                                    漫灌、定时灌溉等粗放方式不仅造成水资源严重浪费，还易引发土壤盐碱化、作物生长不均等问题；
+                                    同时，传统灌溉高度依赖人工经验，人力成本高、效率低，难以适配规模化、精细化的现代农业种植需求。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-chart-line mr-3"></i>政策与市场机遇
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    从政策层面来看，<span class="font-semibold">国家连续多年在中央一号文件中强调发展智慧农业、推进高标准农田建设</span>，
+                                    多地出台节水灌溉补贴政策，鼓励农业生产技术升级；从市场层面，家庭农场、农业合作社等新型经营主体快速崛起，
+                                    对智能灌溉设备的需求持续增长，但现有市场产品多存在依赖网络、阈值控制僵化、成本偏高等问题，
+                                    难以满足偏远地区中小农户的实际使用需求。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-lightbulb mr-3"></i>解决方案
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    在此背景下，结合西安及周边地区农田分布特点与种植结构，本团队研发
+                                    <span class="font-semibold text-brand">多元数据下的人工智能灌溉系统</span>，
+                                    通过算法创新与硬件轻量化设计，解决传统灌溉与常规智能灌溉的痛点，
+                                    实现精准、节水、低成本的农业灌溉，助力区域农业绿色可持续发展。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-rocket mr-3"></i>未来发展
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    公司持续投入技术研发与产品迭代，通过融合多源农业数据优化灌溉模型，
+                                    实现产品功能的不断升级与场景的持续拓展，以增强在智慧农业领域的核心竞争力。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 公司价值观 -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-brand mb-12">核心价值观</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                    <!-- 精准灌溉 -->
+                    <div class="bg-gradient-brand text-white rounded-2xl p-8 hover-lift">
+                        <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa-solid fa-droplet text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-center">精准灌溉</h3>
+                        <p class="text-white/90 leading-relaxed text-center">
+                            基于大数据与人工智能算法，实现按需灌溉、精准控制，最大限度提高水资源利用效率。
+                        </p>
+                    </div>
+
+                    <!-- 绿色生态 -->
+                    <div class="bg-gradient-brand text-white rounded-2xl p-8 hover-lift">
+                        <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa-solid fa-leaf text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-center">绿色生态</h3>
+                        <p class="text-white/90 leading-relaxed text-center">
+                            保护生态环境，减少化肥农药流失，维护土壤健康，促进农业可持续发展。
+                        </p>
+                    </div>
+
+                    <!-- 智慧农业 -->
+                    <div class="bg-gradient-brand text-white rounded-2xl p-8 hover-lift">
+                        <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa-solid fa-brain text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-center">智慧农业</h3>
+                        <p class="text-white/90 leading-relaxed text-center">
+                            融合物联网、大数据、人工智能技术，推动农业生产智能化、管理精细化、决策科学化。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 公司优势 -->
+        <section class="py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-brand mb-12">技术优势</h2>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-microchip text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold">智能算法</h3>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">
+                                自主研发的AI灌溉算法，能够根据作物生长阶段、土壤条件、气象数据等多源信息，智能决策最佳灌溉方案。
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-sensor text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold">轻量化硬件</h3>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">
+                                针对偏远地区网络条件有限的环境，研发低功耗、低成本、易部署的智能灌溉硬件设备。
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-database text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold">多元数据融合</h3>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">
+                                整合土壤湿度、气象预报、作物生长模型等多维度数据，构建精准的灌溉决策模型。
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold">成本效益</h3>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">
+                                相比传统灌溉可节水30-50%，减少人工成本60%以上，帮助农户实现经济效益最大化。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心技术实现：聚类分析+模糊控制 -->
+        <section class="py-16 bg-white" id="technology">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-brand mb-12">核心技术实现：聚类分析 + 模糊控制</h2>
+                
+                <div class="max-w-5xl mx-auto">
+                    <!-- 技术架构概览 -->
+                    <div class="bg-gradient-brand text-white rounded-2xl p-8 mb-10">
+                        <h3 class="text-2xl font-bold mb-6 text-center">双引擎智能决策架构</h3>
+                        <p class="text-lg leading-relaxed text-center opacity-90">
+                            本系统采用 <span class="font-bold">"聚类分析 + 模糊控制"</span> 双引擎技术架构，实现从数据感知到智能决策的完整闭环，
+                            确保灌溉策略既精准又适应农田复杂多变的环境。
+                        </p>
+                    </div>
+
+                    <!-- 技术实现步骤 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- 聚类分析部分 -->
+                        <div class="bg-brand/5 p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-14 h-14 rounded-full bg-brand/20 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-chart-pie text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold">聚类分析</h3>
+                                    <p class="text-gray-600 text-sm mt-1">数据分类与场景划分技术</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-database mr-2"></i>数据采集与预处理
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li><i class="fa-solid fa-check text-brand mr-2"></i><strong>采集对象：</strong>土壤湿度、空气温湿度、光照、降雨量、作物生长阶段</li>
+                                        <li><i class="fa-solid fa-check text-brand mr-2"></i><strong>预处理：</strong>剔除异常数据，统一量纲标准化(0-1区间)</li>
+                                        <li><i class="fa-solid fa-check text-brand mr-2"></i><strong>采样频率：</strong>每10分钟采集一次，确保数据实时性</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-object-group mr-2"></i>K-Means聚类划分
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li><i class="fa-solid fa-chart-line text-brand mr-2"></i><strong>特征维度：</strong>土壤湿度、空气湿度、作物生长阶段为核心特征</li>
+                                        <li><i class="fa-solid fa-chart-line text-brand mr-2"></i><strong>典型场景划分：</strong></li>
+                                        <li class="ml-6"><span class="font-semibold">场景1：</span>高湿度+成熟期 → 低需水组</li>
+                                        <li class="ml-6"><span class="font-semibold">场景2：</span>中湿度+成株期 → 中需水组</li>
+                                        <li class="ml-6"><span class="font-semibold">场景3：</span>低湿度+幼苗期 → 高需水组</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-bullseye mr-2"></i>场景标签输出
+                                    </h4>
+                                    <p class="text-gray-700 text-sm">
+                                        为每个聚类结果打上"需水等级标签"，作为模糊控制的输入前提，实现数据驱动的场景感知。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 模糊控制部分 -->
+                        <div class="bg-brand/5 p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-14 h-14 rounded-full bg-brand/20 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-brain text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold">模糊控制</h3>
+                                    <p class="text-gray-600 text-sm mt-1">智能决策与精准执行技术</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-sliders mr-2"></i>模糊规则库构建
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li><i class="fa-solid fa-list-check text-brand mr-2"></i><strong>输入变量：</strong>需水等级(低/中/高)、土壤湿度偏差</li>
+                                        <li><i class="fa-solid fa-list-check text-brand mr-2"></i><strong>输出变量：</strong>灌溉时长(短/中/长)、流量(小/中/大)</li>
+                                        <li><i class="fa-solid fa-list-check text-brand mr-2"></i><strong>规则示例：</strong></li>
+                                        <li class="ml-6 text-xs"><code>IF 需水等级高 AND 湿度偏差负大 → THEN 时长短 AND 流量大</code></li>
+                                        <li class="ml-6 text-xs"><code>IF 需水等级中 AND 湿度偏差负中 → THEN 时长中 AND 流量中</code></li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-gears mr-2"></i>模糊推理与解模糊
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li><i class="fa-solid fa-calculator text-brand mr-2"></i><strong>推理方法：</strong>Mamdani模糊推理算法</li>
+                                        <li><i class="fa-solid fa-calculator text-brand mr-2"></i><strong>解模糊：</strong>重心法(COG)转换模糊量为精确值</li>
+                                        <li><i class="fa-solid fa-calculator text-brand mr-2"></i><strong>输出示例：</strong>"时长-长" → 30分钟，"流量-大" → 5L/min</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-repeat mr-2"></i>反馈优化机制
+                                    </h4>
+                                    <p class="text-gray-700 text-sm">
+                                        灌溉后持续监测数据，验证效果并反馈至聚类样本库，
+                                        定期优化模糊规则，实现系统自学习与自适应进化。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 技术优势总结 -->
+                    <div class="mt-12 bg-gradient-brand text-white rounded-2xl p-8">
+                        <h3 class="text-2xl font-bold mb-6 text-center">技术优势对比</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-white">
+                                <thead>
+                                    <tr class="border-b border-white/30">
+                                        <th class="py-3 px-4 text-left">对比维度</th>
+                                        <th class="py-3 px-4 text-left">传统阈值控制</th>
+                                        <th class="py-3 px-4 text-left">聚类+模糊控制</th>
+                                        <th class="py-3 px-4 text-left">提升效果</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-white/20">
+                                        <td class="py-3 px-4 font-semibold">决策精度</td>
+                                        <td class="py-3 px-4">固定阈值，一刀切</td>
+                                        <td class="py-3 px-4">多维度综合决策</td>
+                                        <td class="py-3 px-4 text-green-300 font-bold">提升65%</td>
+                                    </tr>
+                                    <tr class="border-b border-white/20">
+                                        <td class="py-3 px-4 font-semibold">节水率</td>
+                                        <td class="py-3 px-4">20-30%</td>
+                                        <td class="py-3 px-4">40-60%</td>
+                                        <td class="py-3 px-4 text-green-300 font-bold">提升100%</td>
+                                    </tr>
+                                    <tr class="border-b border-white/20">
+                                        <td class="py-3 px-4 font-semibold">场景适应性</td>
+                                        <td class="py-3 px-4">单一场景固定策略</td>
+                                        <td class="py-3 px-4">动态适应多种场景</td>
+                                        <td class="py-3 px-4 text-green-300 font-bold">提升80%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-4 font-semibold">人工干预频率</td>
+                                        <td class="py-3 px-4">每天需调整</td>
+                                        <td class="py-3 px-4">每月优化一次</td>
+                                        <td class="py-3 px-4 text-green-300 font-bold">减少90%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 技术流程图 -->
+                    <div class="mt-12 bg-white rounded-2xl p-8 card-shadow">
+                        <h3 class="text-2xl font-bold text-center text-brand mb-8">技术实现流程图</h3>
+                        <div class="relative">
+                            <!-- 流程图 -->
+                            <div class="flex flex-col items-center">
+                                <!-- 步骤1 -->
+                                <div class="bg-brand/10 p-6 rounded-lg w-full max-w-2xl mb-6">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold mr-4">1</div>
+                                        <div>
+                                            <h4 class="font-bold text-lg">数据采集与预处理</h4>
+                                            <p class="text-gray-600 text-sm">多传感器实时采集，标准化处理</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 箭头1 -->
+                                <div class="text-brand text-2xl mb-6">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </div>
+                                
+                                <!-- 步骤2 -->
+                                <div class="bg-brand/10 p-6 rounded-lg w-full max-w-2xl mb-6">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold mr-4">2</div>
+                                        <div>
+                                            <h4 class="font-bold text-lg">K-Means聚类分析</h4>
+                                            <p class="text-gray-600 text-sm">划分需水场景，打标签</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 箭头2 -->
+                                <div class="text-brand text-2xl mb-6">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </div>
+                                
+                                <!-- 步骤3 -->
+                                <div class="bg-brand/10 p-6 rounded-lg w-full max-w-2xl mb-6">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold mr-4">3</div>
+                                        <div>
+                                            <h4 class="font-bold text-lg">模糊控制决策</h4>
+                                            <p class="text-gray-600 text-sm">模糊推理，输出灌溉参数</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 箭头3 -->
+                                <div class="text-brand text-2xl mb-6">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </div>
+                                
+                                <!-- 步骤4 -->
+                                <div class="bg-brand/10 p-6 rounded-lg w-full max-w-2xl mb-6">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold mr-4">4</div>
+                                        <div>
+                                            <h4 class="font-bold text-lg">精准执行灌溉</h4>
+                                            <p class="text-gray-600 text-sm">控制水泵阀门，按需灌溉</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 箭头4 -->
+                                <div class="text-brand text-2xl mb-6">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </div>
+                                
+                                <!-- 步骤5 -->
+                                <div class="bg-brand/10 p-6 rounded-lg w-full max-w-2xl">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold mr-4">5</div>
+                                        <div>
+                                            <h4 class="font-bold text-lg">数据反馈优化</h4>
+                                            <p class="text-gray-600 text-sm">持续监测，闭环优化系统</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 text-center">
+                            <p class="text-gray-700 font-semibold">
+                                <i class="fa-solid fa-lightbulb text-brand mr-2"></i>
+                                技术亮点：聚类分析实现数据智能分组，模糊控制模拟人类决策思维，
+                                两者结合让灌溉系统真正具备"智能"与"适应"能力
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 公司愿景 -->
+        <section class="py-16 bg-gradient-brand text-white">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto text-center">
+                    <h2 class="text-3xl font-bold mb-6">公司愿景</h2>
+                    <p class="text-xl leading-relaxed mb-8 opacity-90">
+                        成为中国智慧农业灌溉领域的引领者，通过技术创新助力农业现代化，
+                        让每一滴水都发挥最大价值，让每一亩地都实现最佳产出。
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="index.html" class="bg-white text-brand hover:bg-gray-100 font-bold px-8 py-3 rounded-lg transition">
+                            体验智能灌溉系统
+                        </a>
+                        <button onclick="window.print()" class="bg-transparent border-2 border-white hover:bg-white/10 font-bold px-8 py-3 rounded-lg transition">
+                            <i class="fa-solid fa-print mr-2"></i>打印本页
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ae10c927211a4d40a7ce83dc0d6d62b0.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260203224317F56453BF2EEA2D01E594&rrcfp=dafada99&x-expires=2086353797&x-signature=eTC2QeGqQdxxHpf5UMQFHG7AwFk%3D" 
+                             alt="乡业绿禾灌溉科技有限公司" 
+                             class="h-8 w-auto rounded mr-2">
+                        乡业绿禾灌溉科技有限公司
+                    </h3>
+                    <p class="text-gray-400 mb-4">
+                        基于大数据和人工智能的智能灌溉系统，
+                        精准灌溉，节水增效，助力农业现代化发展。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fa-solid fa-envelope"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fa-solid fa-phone"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fa-solid fa-question-circle"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">快速链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition">系统主页</a></li>
+                        <li><a href="#dashboard" class="text-gray-400 hover:text-white transition">仪表盘</a></li>
+                        <li><a href="#crops" class="text-gray-400 hover:text-white transition">作物灌溉方案</a></li>
+                        <li><a href="company.html#technology" class="text-gray-400 hover:text-white transition font-bold">核心技术</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">联系我们</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400"><i class="fa-solid fa-phone mr-2"></i>服务热线: 18291248918</li>
+                        <li class="text-gray-400"><i class="fa-solid fa-envelope mr-2"></i>技术支持: 3362024376@qq.com</li>
+                        <li class="text-gray-400"><i class="fa-solid fa-location-dot mr-2"></i>公司地址: 陕西省西安市</li>
+                        <li class="text-gray-400"><i class="fa-solid fa-calendar mr-2"></i>更新日期: 2026-02-10</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>© 2026 乡业绿禾灌溉科技有限公司 版权所有 | 科技赋能，节水兴农</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-brand text-white p-3 rounded-full shadow-lg opacity-0 transition-opacity duration-300 hover:bg-brand/90">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // 返回顶部功能
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.remove('opacity-0');
+                backToTop.classList.add('opacity-100');
+            } else {
+                backToTop.classList.remove('opacity-100');
+                backToTop.classList.add('opacity-0');
+            }
+        });
+        
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
