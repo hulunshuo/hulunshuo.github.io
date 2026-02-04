@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物灌溉生 - 大数据下的人工智能灌溉系统</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#16A34A', // 农业绿
+                        secondary: '#0EA5E9', // 科技蓝
+                        warning: '#F59E0B', // 警示黄
+                        danger: '#EF4444', // 危险红
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        brand: '#0F766E' // 乡业绿禾品牌色
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .status-online {
+                @apply bg-primary/10 text-primary border border-primary/20;
+            }
+            .status-warning {
+                @apply bg-warning/10 text-warning border border-warning/20;
+            }
+            .status-offline {
+                @apply bg-danger/10 text-danger border border-danger/20;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light font-sans text-dark min-h-screen flex flex-col">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white card-shadow sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <nav class="flex justify-between items-center py-4">
+                <!-- Logo区域 - 集成公司标志 -->
+                <div class="flex items-center space-x-3">
+                    <!-- 公司Logo图片 -->
+                    <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ae10c927211a4d40a7ce83dc0d6d62b0.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260203224317F56453BF2EEA2D01E594&rrcfp=dafada99&x-expires=2086353797&x-signature=eTC2QeGqQdxxHpf5UMQFHG7AwFk%3D" 
+                         alt="乡业绿禾灌溉科技有限公司" 
+                         class="h-12 w-auto rounded">
+                    <!-- 品牌名称 -->
+                    <div>
+                        <h1 class="text-xl font-bold text-brand">乡业绿禾</h1>
+                        <p class="text-xs text-gray-500">AI智能灌溉系统</p>
+                    </div>
+                </div>
+                
+                <!-- 导航菜单 -->
+                <ul class="hidden md:flex space-x-8">
+                    <li><a href="#dashboard" class="text-brand font-medium">仪表盘</a></li>
+                    <li><a href="#crops" class="hover:text-brand transition">作物灌溉方案</a></li>
+                    <li><a href="#analysis" class="hover:text-brand transition">数据分析</a></li>
+                    <li><a href="#hardware" class="hover:text-brand transition">硬件监控</a></li>
+                    <li><a href="#suggestion" class="hover:text-brand transition">智能建议</a></li>
+                </ul>
+                
+                <!-- 用户信息 -->
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:block">
+                        <span class="text-sm text-gray-600">管理员</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center text-brand">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <!-- 移动端菜单按钮 -->
+                    <button id="mobileMenuBtn" class="md:hidden text-xl">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+            </nav>
+            
+            <!-- 移动端导航菜单 -->
+            <div id="mobileMenu" class="md:hidden hidden pb-4 border-t">
+                <ul class="space-y-3">
+                    <li><a href="#dashboard" class="block py-2 text-brand font-medium">仪表盘</a></li>
+                    <li><a href="#crops" class="block py-2">作物灌溉方案</a></li>
+                    <li><a href="#analysis" class="block py-2">数据分析</a></li>
+                    <li><a href="#hardware" class="block py-2">硬件监控</a></li>
+                    <li><a href="#suggestion" class="block py-2">智能建议</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-1 container mx-auto px-4 py-8">
+        <!-- 系统概览仪表盘 -->
+        <section id="dashboard" class="mb-12">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2">系统仪表盘</h2>
+                    <p class="text-gray-500">乡业绿禾智能灌溉系统 - 实时监控灌溉系统运行状态与环境数据</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex space-x-4">
+                    <button class="bg-brand hover:bg-brand/90 text-white px-4 py-2 rounded-lg flex items-center transition">
+                        <i class="fa-solid fa-refresh mr-2"></i>刷新数据
+                    </button>
+                    <button class="bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg flex items-center transition">
+                        <i class="fa-solid fa-download mr-2"></i>导出报告
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 数据卡片 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- 土壤湿度 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">土壤湿度</p>
+                            <h3 class="text-3xl font-bold" id="soilMoisture">68%</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <span class="text-brand flex items-center">
+                            <i class="fa-solid fa-arrow-up mr-1"></i> 2.5%
+                        </span>
+                        <span class="text-gray-500 ml-2">较昨日</span>
+                    </div>
+                </div>
+                
+                <!-- 环境温度 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">环境温度</p>
+                            <h3 class="text-3xl font-bold" id="temp">25.8°C</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-warning/10 flex items-center justify-center text-warning">
+                            <i class="fa-solid fa-temperature-full"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <span class="text-danger flex items-center">
+                            <i class="fa-solid fa-arrow-up mr-1"></i> 1.2°C
+                        </span>
+                        <span class="text-gray-500 ml-2">较昨日</span>
+                    </div>
+                </div>
+                
+                <!-- 空气湿度 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">空气湿度</p>
+                            <h3 class="text-3xl font-bold" id="airHumidity">45%</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+                            <i class="fa-solid fa-wind"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <span class="text-danger flex items-center">
+                            <i class="fa-solid fa-arrow-down mr-1"></i> 3.8%
+                        </span>
+                        <span class="text-gray-500 ml-2">较昨日</span>
+                    </div>
+                </div>
+                
+                <!-- 灌溉状态 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">灌溉状态</p>
+                            <h3 class="text-3xl font-bold text-brand">运行中</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand">
+                            <i class="fa-solid fa-faucet-drip"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <span class="text-gray-500">
+                            <i class="fa-solid fa-clock mr-1"></i> 今日已运行: 2.5小时
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 实时数据图表 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 土壤湿度趋势图 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold mb-4">土壤湿度趋势 (24小时)</h3>
+                    <div class="h-80">
+                        <canvas id="moistureChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 灌溉用水量统计 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold mb-4">灌溉用水量统计</h3>
+                    <div class="h-80">
+                        <canvas id="waterConsumptionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 作物灌溉方案 -->
+        <section id="crops" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">作物灌溉方案</h2>
+            
+            <!-- 作物选择器 -->
+            <div class="flex flex-wrap gap-4 mb-8">
+                <button class="crop-btn bg-brand text-white px-4 py-2 rounded-lg">小麦</button>
+                <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg">水稻</button>
+                <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg">玉米</button>
+                <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg">蔬菜</button>
+                <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg">果树</button>
+                <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg">棉花</button>
+            </div>
+            
+            <!-- 小麦灌溉方案详情 -->
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">小麦智能灌溉方案</h3>
+                        <p class="text-gray-500">生长期：拔节期 | 最佳土壤湿度：65-75%</p>
+                    </div>
+                    <button class="mt-4 md:mt-0 bg-brand/10 hover:bg-brand/20 text-brand px-4 py-2 rounded-lg flex items-center self-start transition">
+                        <i class="fa-solid fa-edit mr-2"></i>编辑方案
+                    </button>
+                </div>
+                
+                <!-- 灌溉参数表格 -->
+                <div class="overflow-x-auto mb-8">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="py-3 px-4 text-left text-gray-500">灌溉参数</th>
+                                <th class="py-3 px-4 text-left text-gray-500">当前值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">目标值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">土壤湿度</td>
+                                <td class="py-3 px-4">68%</td>
+                                <td class="py-3 px-4">65-75%</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉频率</td>
+                                <td class="py-3 px-4">每3天一次</td>
+                                <td class="py-3 px-4">每2-4天一次</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">单次灌溉量</td>
+                                <td class="py-3 px-4">30m³/亩</td>
+                                <td class="py-3 px-4">25-35m³/亩</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉时间</td>
+                                <td class="py-3 px-4">06:00-08:00</td>
+                                <td class="py-3 px-4">05:00-09:00</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">水温</td>
+                                <td class="py-3 px-4">18°C</td>
+                                <td class="py-3 px-4">15-25°C</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 灌溉方式说明 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-check-circle text-brand mr-2"></i>推荐灌溉方式
+                        </h4>
+                        <p class="text-gray-600">滴灌 + 喷灌结合，滴灌为主，喷灌为辅。滴灌可以精准供水到小麦根部，减少水分蒸发，喷灌可以调节田间小气候，降低温度。</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-exclamation-circle text-warning mr-2"></i>注意事项
+                        </h4>
+                        <p class="text-gray-600">避免中午高温时段灌溉，防止根系受损；拔节期需水量大，要保证灌溉及时；定期检查灌溉设备，防止堵塞。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 数据分析 -->
+        <section id="analysis" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">灌溉数据分析</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 不同作物耗水量对比 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold mb-4">不同作物耗水量对比</h3>
+                    <div class="h-64">
+                        <canvas id="cropWaterChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 灌溉效率分析 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold mb-4">灌溉效率分析</h3>
+                    <div class="h-64">
+                        <canvas id="efficiencyChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 产量与灌溉量关系 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold mb-4">产量与灌溉量关系</h3>
+                    <div class="h-64">
+                        <canvas id="yieldChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 硬件监控 -->
+        <section id="hardware" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">硬件设备监控</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 传感器1 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-bold">土壤湿度传感器 #001</h3>
+                            <p class="text-gray-500 text-sm">麦田区域 | 安装时间：2024-01-15</p>
+                        </div>
+                        <span class="status-online px-2 py-1 rounded-full text-sm">在线</span>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">当前读数</span>
+                            <span class="font-medium">68.2%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">信号强度</span>
+                            <span class="font-medium">98%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">电池电量</span>
+                            <span class="font-medium">85%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">最后上报</span>
+                            <span class="font-medium">2分钟前</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-brand/10 hover:bg-brand/20 text-brand px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-refresh mr-1"></i>刷新
+                        </button>
+                        <button class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-cog mr-1"></i>设置
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 控制器 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-bold">智能灌溉控制器 #001</h3>
+                            <p class="text-gray-500 text-sm">主控制器 | 安装时间：2026-01-4</p>
+                        </div>
+                        <span class="status-online px-2 py-1 rounded-full text-sm">在线</span>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">运行状态</span>
+                            <span class="font-medium text-brand">正常运行</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">连接设备数</span>
+                            <span class="font-medium">8台</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">累计运行时长</span>
+                            <span class="font-medium">1258小时</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">软件版本</span>
+                            <span class="font-medium">v2.5.8</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-brand/10 hover:bg-brand/20 text-brand px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-play mr-1"></i>启动
+                        </button>
+                        <button class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-pause mr-1"></i>暂停
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 水泵 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-bold">智能水泵 #001</h3>
+                            <p class="text-gray-500 text-sm">北灌溉区 | 安装时间：2024-01-12</p>
+                        </div>
+                        <span class="status-warning px-2 py-1 rounded-full text-sm">预警</span>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">运行状态</span>
+                            <span class="font-medium text-warning">压力偏低</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">出水压力</span>
+                            <span class="font-medium">1.2MPa (标准: 1.5-2.0MPa)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">运行功率</span>
+                            <span class="font-medium">7.5kW</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">累计工作时长</span>
+                            <span class="font-medium">896小时</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-warning/10 hover:bg-warning/20 text-warning px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-exclamation-triangle mr-1"></i>查看故障
+                        </button>
+                        <button class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-tools mr-1"></i>维护
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 设备地图 -->
+            <div class="mt-8 bg-white rounded-xl p-6 card-shadow">
+                <h3 class="text-lg font-bold mb-4">设备分布地图</h3>
+                <div class="h-80 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fa-solid fa-map-location-dot text-5xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-500">乡业绿禾灌溉系统 - 设备分布地图可视化界面</p>
+                        <p class="text-gray-400 text-sm mt-2">点击设备图标查看详细信息</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 智能建议 -->
+        <section id="suggestion" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">AI智能灌溉建议</h2>
+            
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">乡业绿禾 - 基于大数据分析的灌溉建议</h3>
+                        <p class="text-gray-500">更新时间：2024-05-20 08:30 | 分析数据量：128,546条</p>
+                    </div>
+                    <button class="mt-4 md:mt-0 bg-brand hover:bg-brand/90 text-white px-4 py-2 rounded-lg flex items-center self-start transition">
+                        <i class="fa-solid fa-microchip mr-2"></i>重新分析
+                    </button>
+                </div>
+                
+                <!-- 建议列表 -->
+                <div class="space-y-6">
+                    <!-- 建议1 -->
+                    <div class="border-l-4 border-brand pl-4 py-2">
+                        <h4 class="font-bold mb-1">灌溉时间调整建议</h4>
+                        <p class="text-gray-600">根据未来3天天气预报（气温26-30°C，无降雨），建议将小麦灌溉时间调整至每日05:00-07:00，避开高温时段，减少水分蒸发，预计可节水15%。</p>
+                    </div>
+                    
+                    <!-- 建议2 -->
+                    <div class="border-l-4 border-warning pl-4 py-2">
+                        <h4 class="font-bold mb-1">设备维护建议</h4>
+                        <p class="text-gray-600">水泵#001出水压力连续3天低于标准值，建议检查水泵叶轮是否堵塞或磨损，及时进行维护，避免影响灌溉效果。</p>
+                    </div>
+                    
+                    <!-- 建议3 -->
+                    <div class="border-l-4 border-brand pl-4 py-2">
+                        <h4 class="font-bold mb-1">灌溉量优化建议</h4>
+                        <p class="text-gray-600">小麦拔节期需水量增加，但当前土壤保水能力良好，建议灌溉量维持30m³/亩，灌溉频率调整为每2天一次，可提高产量约8%。</p>
+                    </div>
+                    
+                    <!-- 建议4 -->
+                    <div class="border-l-4 border-secondary pl-4 py-2">
+                        <h4 class="font-bold mb-1">分区灌溉建议</h4>
+                        <p class="text-gray-600">根据土壤湿度传感器数据，麦田东区湿度(72%)高于西区(62%)，建议实施分区差异化灌溉，东区灌溉量减少20%，西区增加15%，实现精准灌溉。</p>
+                    </div>
+                    
+                    <!-- 建议5 -->
+                    <div class="border-l-4 border-brand pl-4 py-2">
+                        <h4 class="font-bold mb-1">施肥灌溉结合建议</h4>
+                        <p class="text-gray-600">建议在下次灌溉时添加氮磷钾复合肥，浓度控制在0.5%，通过水肥一体化技术，提高肥料利用率，减少肥料流失，预计可节约肥料成本12%。</p>
+                    </div>
+                </div>
+                
+                <!-- 执行建议 -->
+                <div class="mt-8 flex justify-end">
+                    <button class="bg-brand hover:bg-brand/90 text-white px-6 py-3 rounded-lg flex items-center transition">
+                        <i class="fa-solid fa-rocket mr-2"></i>执行智能建议
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ae10c927211a4d40a7ce83dc0d6d62b0.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260203224317F56453BF2EEA2D01E594&rrcfp=dafada99&x-expires=2086353797&x-signature=eTC2QeGqQdxxHpf5UMQFHG7AwFk%3D" 
+                             alt="乡业绿禾灌溉科技有限公司" 
+                             class="h-8 w-auto rounded mr-2">
+                        乡业绿禾灌溉科技有限公司
+                    </h3>
+                    <p class="text-gray-400 mb-4">
+                        基于大数据和人工智能的智能灌溉系统，
+                        精准灌溉，节水增效，助力农业现代化发展。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fa-solid fa-envelope"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fa-solid fa-phone"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fa-solid fa-question-circle"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">快速链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#dashboard" class="text-gray-400 hover:text-white transition">仪表盘</a></li>
+                        <li><a href="#crops" class="text-gray-400 hover:text-white transition">作物灌溉方案</a></li>
+                        <li><a href="#analysis" class="text-gray-400 hover:text-white transition">数据分析</a></li>
+                        <li><a href="#hardware" class="text-gray-400 hover:text-white transition">硬件监控</a></li>
+                        <li><a href="#suggestion" class="text-gray-400 hover:text-white transition">智能建议</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">系统信息</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400">版本号: v1.0.0</li>
+                        <li class="text-gray-400">更新时间: 2026-02-4</li>
+                        <li class="text-gray-400">数据采集点: 28个</li>
+                        <li class="text-gray-400">服务热线: 18291248918</li>
+                        <li class="text-gray-400">技术支持: 3362024376@qq.com</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>© 2026 乡业绿禾灌溉科技有限公司 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 移动端菜单切换
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (icon.classList.contains('fa-bars')) {
+                icon.classList.replace('fa-bars', 'fa-times');
+            } else {
+                icon.classList.replace('fa-times', 'fa-bars');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 关闭移动端菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        const icon = mobileMenuBtn.querySelector('i');
+                        icon.classList.replace('fa-times', 'fa-bars');
+                    }
+                }
+            });
+        });
+        
+        // 作物按钮切换
+        const cropBtns = document.querySelectorAll('.crop-btn');
+        cropBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 重置所有按钮样式
+                cropBtns.forEach(b => {
+                    b.classList.remove('bg-brand', 'text-white');
+                    b.classList.add('bg-white', 'border', 'border-gray-300', 'hover:bg-gray-50');
+                });
+                
+                // 设置当前按钮样式
+                btn.classList.remove('bg-white', 'border', 'border-gray-300', 'hover:bg-gray-50');
+                btn.classList.add('bg-brand', 'text-white');
+            });
+        });
+        
+        // 土壤湿度趋势图表
+        const moistureCtx = document.getElementById('moistureChart').getContext('2d');
+        new Chart(moistureCtx, {
+            type: 'line',
+            data: {
+                labels: ['0:00', '2:00', '4:00', '6:00', '8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                datasets: [{
+                    label: '土壤湿度 (%)',
+                    data: [72, 71, 70, 69, 68, 67, 65, 64, 66, 67, 68, 69],
+                    borderColor: '#0F766E',
+                    backgroundColor: 'rgba(15, 118, 110, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: '目标湿度 (%)',
+                    data: [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70],
+                    borderColor: '#9CA3AF',
+                    borderDash: [5, 5],
+                    tension: 0,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 60,
+                        max: 75,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 灌溉用水量统计图表
+        const waterConsumptionCtx = document.getElementById('waterConsumptionChart').getContext('2d');
+        new Chart(waterConsumptionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                datasets: [{
+                    label: '灌溉用水量 (m³)',
+                    data: [120, 135, 110, 140, 125, 90, 85],
+                    backgroundColor: '#0EA5E9',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // 不同作物耗水量对比图表
+        const cropWaterCtx = document.getElementById('cropWaterChart').getContext('2d');
+        new Chart(cropWaterCtx, {
+            type: 'radar',
+            data: {
+                labels: ['苗期', '分蘖期', '拔节期', '抽穗期', '灌浆期', '成熟期'],
+                datasets: [{
+                    label: '小麦',
+                    data: [40, 60, 80, 90, 70, 30],
+                    backgroundColor: 'rgba(15, 118, 110, 0.2)',
+                    borderColor: '#0F766E',
+                    pointBackgroundColor: '#0F766E'
+                }, {
+                    label: '水稻',
+                    data: [50, 70, 90, 100, 80, 40],
+                    backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                    borderColor: '#0EA5E9',
+                    pointBackgroundColor: '#0EA5E9'
+                }, {
+                    label: '玉米',
+                    data: [30, 50, 70, 80, 60, 20],
+                    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                    borderColor: '#F59E0B',
+                    pointBackgroundColor: '#F59E0B'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 灌溉效率分析图表
+        const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
+        new Chart(efficiencyCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['有效利用', '蒸发损失', '渗透损失', '其他损失'],
+                datasets: [{
+                    data: [75, 10, 12, 3],
+                    backgroundColor: [
+                        '#0F766E',
+                        '#F59E0B',
+                        '#EF4444',
+                        '#9CA3AF'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '灌溉水利用效率: 75%',
+                        font: {
+                            size: 14
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 产量与灌溉量关系图表
+        const yieldCtx = document.getElementById('yieldChart').getContext('2d');
+        new Chart(yieldCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: '小麦产量 vs 灌溉量',
+                    data: [
+                        {x: 20, y: 450},
+                        {x: 25, y: 500},
+                        {x: 30, y: 550},
+                        {x: 35, y: 580},
+                        {x: 40, y: 570},
+                        {x: 45, y: 550},
+                        {x: 50, y: 520}
+                    ],
+                    backgroundColor: '#0F766E'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '灌溉量 (m³/亩)'
+                        },
+                        min: 15,
+                        max: 55
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '产量 (kg/亩)'
+                        },
+                        min: 400,
+                        max: 600
+                    }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                xMin: 35,
+                                xMax: 35,
+                                yMin: 400,
+                                yMax: 600,
+                                borderColor: 'red',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    display: true,
+                                    content: '最佳灌溉量'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 模拟实时数据更新
+        function updateRealTimeData() {
+            const soilMoisture = document.getElementById('soilMoisture');
+            const temp = document.getElementById('temp');
+            const airHumidity = document.getElementById('airHumidity');
+            
+            // 模拟小幅波动
+            const currentMoisture = parseFloat(soilMoisture.textContent);
+            const newMoisture = (currentMoisture + (Math.random() - 0.5) * 0.4).toFixed(1);
+            soilMoisture.textContent = newMoisture + '%';
+            
+            const currentTemp = parseFloat(temp.textContent);
+            const newTemp = (currentTemp + (Math.random() - 0.5) * 0.2).toFixed(1);
+            temp.textContent = newTemp + '°C';
+            
+            const currentAirHumidity = parseFloat(airHumidity.textContent);
+            const newAirHumidity = (currentAirHumidity + (Math.random() - 0.5) * 0.5).toFixed(1);
+            airHumidity.textContent = newAirHumidity + '%';
+        }
+        
+        // 每5秒更新一次实时数据
+        setInterval(updateRealTimeData, 5000);
+    </script>
+</body>
+</html>
