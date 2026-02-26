@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聚类模糊控制 - 乡业绿禾智能灌溉系统</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .cluster-node {
+            transition: all 0.3s ease;
+        }
+        .cluster-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .fuzzy-rule-card {
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+        .fuzzy-rule-card:hover {
+            transform: translateX(5px);
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ae10c927211a4d40a7ce83dc0d6d62b0.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260203224317F56453BF2EEA2D01E594&rrcfp=dafada99&x-expires=2086353797&x-signature=eTC2QeGqQdxxHpf5UMQFHG7AwFk%3D" 
+                         alt="乡业绿禾" 
+                         class="h-10 w-auto rounded">
+                    <div>
+                        <h1 class="text-lg font-bold text-teal-700">乡业绿禾</h1>
+                        <p class="text-xs text-gray-500">聚类模糊控制系统</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-600 hover:text-teal-700">
+                        返回主系统
+                    </a>
+                    <button onclick="startAnalysis()" class="bg-gradient-bg hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center">
+                        <i class="fa-solid fa-play mr-2"></i>启动分析
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- 系统概述 -->
+        <section class="mb-12">
+            <div class="gradient-bg text-white rounded-2xl p-8 mb-8">
+                <h1 class="text-3xl font-bold mb-4">聚类+模糊控制智能灌溉系统</h1>
+                <p class="text-lg mb-4">基于K-Means聚类和模糊逻辑的精准灌溉决策系统</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3">
+                                <i class="fa-solid fa-sitemap"></i>
+                            </div>
+                            <h3 class="font-bold">智能聚类分析</h3>
+                        </div>
+                        <p class="text-sm">自动划分农田需水场景</p>
+                    </div>
+                    <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <h3 class="font-bold">模糊逻辑控制</h3>
+                        </div>
+                        <p class="text-sm">模拟人类决策思维</p>
+                    </div>
+                    <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3">
+                                <i class="fa-solid fa-water"></i>
+                            </div>
+                            <h3 class="font-bold">节水增效</h3>
+                        </div>
+                        <p class="text-sm">精准灌溉减少浪费</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 流程展示 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">系统工作流程</h2>
+            <div class="relative">
+                <!-- 流程步骤 -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <!-- 步骤1 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md text-center relative z-10">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-database text-blue-600 text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold mb-2">数据采集</h3>
+                        <p class="text-gray-600 text-sm">实时采集多维度传感器数据</p>
+                        <div class="mt-4 text-left text-xs">
+                            <div class="flex justify-between mb-1">
+                                <span>土壤湿度</span>
+                                <span class="font-bold">68.2%</span>
+                            </div>
+                            <div class="flex justify-between mb-1">
+                                <span>空气温度</span>
+                                <span class="font-bold">25.8°C</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>作物生长阶段</span>
+                                <span class="font-bold">成株期</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤2 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md text-center relative z-10">
+                        <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-project-diagram text-purple-600 text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold mb-2">聚类分析</h3>
+                        <p class="text-gray-600 text-sm">K-Means算法场景划分</p>
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs">聚类进度</span>
+                                <span class="text-xs font-bold" id="clusteringProgress">0%</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div id="clusteringProgressBar" class="h-full bg-purple-600" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤3 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md text-center relative z-10">
+                        <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-cogs text-green-600 text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold mb-2">模糊控制</h3>
+                        <p class="text-gray-600 text-sm">模糊规则推理决策</p>
+                        <div class="mt-4">
+                            <div class="text-left">
+                                <p class="text-xs mb-1">规则匹配度</p>
+                                <div class="flex items-center">
+                                    <div class="flex-1 h-2 bg-gray-200 rounded-full mr-2">
+                                        <div class="h-full bg-green-500 rounded-full" style="width: 85%"></div>
+                                    </div>
+                                    <span class="text-xs font-bold">85%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤4 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md text-center relative z-10">
+                        <div class="w-16 h-16 rounded-full bg-teal-100 flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-water text-teal-600 text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold mb-2">灌溉执行</h3>
+                        <p class="text-gray-600 text-sm">精准控制输出</p>
+                        <div class="mt-4">
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-teal-50 p-2 rounded">
+                                    <p>时长</p>
+                                    <p class="font-bold" id="irrigationTime">-- min</p>
+                                </div>
+                                <div class="bg-teal-50 p-2 rounded">
+                                    <p>流量</p>
+                                    <p class="font-bold" id="irrigationFlow">-- L/min</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 连接箭头 -->
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-0">
+                    <div class="flex justify-between items-center px-8">
+                        <div class="w-12 h-1 bg-gradient-bg"></div>
+                        <div class="w-12 h-1 bg-gradient-bg"></div>
+                        <div class="w-12 h-1 bg-gradient-bg"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 聚类分析可视化 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">聚类分析可视化</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 聚类结果 -->
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                    <h3 class="font-bold mb-4">K-Means聚类结果</h3>
+                    <div class="h-80 relative">
+                        <canvas id="clusteringChart"></canvas>
+                        <div class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-lg p-3">
+                            <div class="flex items-center mb-2">
+                                <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                                <span class="text-sm">高需水场景</span>
+                            </div>
+                            <div class="flex items-center mb-2">
+                                <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                                <span class="text-sm">中需水场景</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                                <span class="text-sm">低需水场景</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-3 gap-2">
+                        <button onclick="updateClusters(3)" class="bg-blue-100 hover:bg-blue-200 text-blue-700 py-2 rounded">
+                            3个聚类
+                        </button>
+                        <button onclick="updateClusters(4)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded">
+                            4个聚类
+                        </button>
+                        <button onclick="updateClusters(5)" class="bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 rounded">
+                            5个聚类
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 聚类详情 -->
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                    <h3 class="font-bold mb-4">聚类场景分析</h3>
+                    <div id="clusterDetails" class="space-y-4">
+                        <!-- 场景卡片会动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 模糊控制规则库 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">模糊控制规则库</h2>
+            <div class="bg-white rounded-xl p-6 shadow-md">
+                <div class="flex flex-col md:flex-row justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-2">模糊规则编辑器</h3>
+                        <p class="text-gray-600">IF-THEN规则形式，支持动态调整</p>
+                    </div>
+                    <button onclick="addNewRule()" class="mt-2 md:mt-0 bg-gradient-bg hover:opacity-90 text-white px-4 py-2 rounded-lg">
+                        <i class="fa-solid fa-plus mr-2"></i>添加规则
+                    </button>
+                </div>
+
+                <!-- 规则列表 -->
+                <div id="fuzzyRules" class="space-y-4">
+                    <!-- 规则会动态生成 -->
+                </div>
+
+                <!-- 规则统计 -->
+                <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-1">激活规则</p>
+                        <p class="text-2xl font-bold text-blue-600">12</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-1">规则匹配率</p>
+                        <p class="text-2xl font-bold text-green-600">92%</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-1">灌溉成功率</p>
+                        <p class="text-2xl font-bold text-purple-600">95%</p>
+                    </div>
+                    <div class="bg-teal-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-1">节水效果</p>
+                        <p class="text-2xl font-bold text-teal-600">23%</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实时控制面板 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">实时控制面板</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- 输入参数 -->
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                    <h3 class="font-bold mb-4">输入参数</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">当前需水等级</label>
+                            <div class="flex items-center">
+                                <span id="waterNeedLevel" class="text-2xl font-bold text-blue-600 mr-2">高</span>
+                                <div class="flex-1 h-4 bg-gray-200 rounded-full">
+                                    <div id="waterNeedBar" class="h-full bg-gradient-bg rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">土壤湿度偏差</label>
+                            <input type="range" id="soilDeviation" min="-100" max="100" value="-30" 
+                                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                   oninput="updateRealTimeControl()">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>-100%</span>
+                                <span id="soilDeviationValue" class="font-bold">-30%</span>
+                                <span>+100%</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">作物生长阶段</label>
+                            <div class="flex space-x-2">
+                                <button onclick="setGrowthStage('seedling')" class="flex-1 py-2 rounded border border-gray-300 hover:bg-gray-50">
+                                    幼苗期
+                                </button>
+                                <button onclick="setGrowthStage('growing')" class="flex-1 py-2 rounded bg-teal-100 border border-teal-300 text-teal-700">
+                                    成株期
+                                </button>
+                                <button onclick="setGrowthStage('mature')" class="flex-1 py-2 rounded border border-gray-300 hover:bg-gray-50">
+                                    成熟期
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模糊推理 -->
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                    <h3 class="font-bold mb-4">模糊推理过程</h3>
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-sm text-gray-600 mb-1">当前匹配规则</p>
+                            <p id="matchedRule" class="font-medium">IF 需水等级高 AND 偏差负大 → THEN 灌溉长 AND 流量大</p>
+                        </div>
+                        
+                        <div>
+                            <p class="text-sm font-medium text-gray-700 mb-2">隶属度计算</p>
+                            <div class="space-y-2">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span>需水等级-高</span>
+                                        <span id="membershipHigh">85%</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-200 rounded-full">
+                                        <div class="h-full bg-blue-500 rounded-full" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span>偏差-负大</span>
+                                        <span id="membershipNegative">70%</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-200 rounded-full">
+                                        <div class="h-full bg-purple-500 rounded-full" style="width: 70%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <p class="text-sm font-medium text-gray-700 mb-2">推理强度</p>
+                            <div class="flex items-center">
+                                <svg class="w-20 h-20 mr-4">
+                                    <circle cx="40" cy="40" r="35" fill="none" stroke="#e5e7eb" stroke-width="8"/>
+                                    <circle id="inferenceRing" cx="40" cy="40" r="35" fill="none" stroke="#667eea" 
+                                            stroke-width="8" stroke-dasharray="220" stroke-dashoffset="110" 
+                                            stroke-linecap="round" class="progress-ring-circle"/>
+                                    <text x="40" y="45" text-anchor="middle" class="text-sm font-bold" fill="#667eea">
+                                        <tspan id="inferenceStrength">60</tspan>%
+                                    </text>
+                                </svg>
+                                <div class="flex-1">
+                                    <p class="text-xs text-gray-600">综合匹配度计算，基于最小运算规则：</p>
+                                    <p class="text-sm font-medium mt-1">min(85%, 70%) = 60%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 输出控制 -->
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                    <h3 class="font-bold mb-4">输出控制指令</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-gray-700">灌溉时长</span>
+                                <span id="outputTime" class="text-2xl font-bold text-teal-600">30分钟</span>
+                            </div>
+                            <div class="h-3 bg-gray-200 rounded-full">
+                                <div id="timeBar" class="h-full bg-teal-500 rounded-full" style="width: 75%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>短(5min)</span>
+                                <span>中(20min)</span>
+                                <span>长(40min)</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-medium text-gray-700">灌溉流量</span>
+                                <span id="outputFlow" class="text-2xl font-bold text-teal-600">5 L/min</span>
+                            </div>
+                            <div class="h-3 bg-gray-200 rounded-full">
+                                <div id="flowBar" class="h-full bg-teal-500 rounded-full" style="width: 62%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>小(2L/min)</span>
+                                <span>中(5L/min)</span>
+                                <span>大(8L/min)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t">
+                            <button onclick="executeIrrigation()" class="w-full bg-gradient-bg hover:opacity-90 text-white py-3 rounded-lg font-medium flex items-center justify-center">
+                                <i class="fa-solid fa-play mr-2"></i>执行灌溉指令
+                            </button>
+                            <p class="text-xs text-gray-500 text-center mt-2">基于聚类和模糊推理的精准控制</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 性能指标 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">系统性能指标</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-bolt text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">决策响应时间</p>
+                            <p class="text-2xl font-bold">0.8s</p>
+                        </div>
+                    </div>
+                    <div class="h-2 bg-gray-200 rounded-full">
+                        <div class="h-full bg-blue-500 rounded-full" style="width: 90%"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-leaf text-green-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">节水率</p>
+                            <p class="text-2xl font-bold">23.5%</p>
+                        </div>
+                    </div>
+                    <div class="h-2 bg-gray-200 rounded-full">
+                        <div class="h-full bg-green-500 rounded-full" style="width: 78%"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-check-circle text-purple-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">灌溉准确率</p>
+                            <p class="text-2xl font-bold">95.2%</p>
+                        </div>
+                    </div>
+                    <div class="h-2 bg-gray-200 rounded-full">
+                        <div class="h-full bg-purple-500 rounded-full" style="width: 95%"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-chart-line text-teal-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">作物增产</p>
+                            <p class="text-2xl font-bold">12.8%</p>
+                        </div>
+                    </div>
+                    <div class="h-2 bg-gray-200 rounded-full">
+                        <div class="h-full bg-teal-500 rounded-full" style="width: 65%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-6">
+                <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ae10c927211a4d40a7ce83dc0d6d62b0.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260203224317F56453BF2EEA2D01E594&rrcfp=dafada99&x-expires=2086353797&x-signature=eTC2QeGqQdxxHpf5UMQFHG7AwFk%3D" 
+                     alt="乡业绿禾" 
+                     class="h-12 w-auto rounded mx-auto mb-4">
+                <h3 class="text-lg font-bold mb-2">乡业绿禾灌溉科技有限公司</h3>
+                <p class="text-gray-400">聚类+模糊控制智能灌溉系统 v1.0</p>
+            </div>
+            <div class="text-gray-400 text-sm">
+                <p>© 2026 乡业绿禾灌溉科技有限公司 版权所有</p>
+                <p class="mt-2">技术支持: 3362024376@qq.com | 服务热线: 18291248918</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 聚类图表
+        let clusteringChart;
+        // 当前生长阶段
+        let currentGrowthStage = 'growing';
+        // 模糊规则库
+        let fuzzyRules = [
+            { id: 1, condition: "需水等级高 AND 偏差负大", action: "灌溉长 AND 流量大", active: true },
+            { id: 2, condition: "需水等级高 AND 偏差负中", action: "灌溉长 AND 流量中", active: true },
+            { id: 3, condition: "需水等级中 AND 偏差负大", action: "灌溉中 AND 流量大", active: true },
+            { id: 4, condition: "需水等级中 AND 偏差负中", action: "灌溉中 AND 流量中", active: true },
+            { id: 5, condition: "需水等级低 AND 偏差负中", action: "灌溉短 AND 流量中", active: true },
+            { id: 6, condition: "需水等级高 AND 偏差零", action: "灌溉中 AND 流量中", active: true },
+            { id: 7, condition: "需水等级中 AND 偏差零", action: "灌溉短 AND 流量小", active: true },
+            { id: 8, condition: "需水等级低 AND 偏差零", action: "不灌溉", active: true }
+        ];
+        
+        // 聚类场景数据
+        const clusterScenarios = [
+            {
+                name: "高需水场景",
+                color: "blue",
+                center: { moisture: 85, temp: 28, stage: 1 },
+                description: "低土壤湿度+高温+生长期，需要高强度灌溉",
+                waterNeed: "高",
+                sampleCount: 156,
+                avgMoisture: "45.2%",
+                avgTemp: "28.5°C"
+            },
+            {
+                name: "中需水场景",
+                color: "green",
+                center: { moisture: 65, temp: 25, stage: 2 },
+                description: "中等湿度+适宜温度+成株期，需要中度灌溉",
+                waterNeed: "中",
+                sampleCount: 234,
+                avgMoisture: "62.8%",
+                avgTemp: "25.2°C"
+            },
+            {
+                name: "低需水场景",
+                color: "red",
+                center: { moisture: 45, temp: 22, stage: 3 },
+                description: "高湿度+低温+成熟期，需要少量或不灌溉",
+                waterNeed: "低",
+                sampleCount: 189,
+                avgMoisture: "78.5%",
+                avgTemp: "22.3°C"
+            }
+        ];
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            initClusteringChart();
+            renderFuzzyRules();
+            renderClusterDetails();
+            updateRealTimeControl();
+        });
+
+        // 初始化聚类图表
+        function initClusteringChart() {
+            const ctx = document.getElementById('clusteringChart').getContext('2d');
+            
+            // 生成随机数据点
+            const dataPoints = [];
+            clusterScenarios.forEach((cluster, clusterIndex) => {
+                for (let i = 0; i < cluster.sampleCount / 10; i++) {
+                    dataPoints.push({
+                        x: cluster.center.moisture + (Math.random() - 0.5) * 20,
+                        y: cluster.center.temp + (Math.random() - 0.5) * 6,
+                        cluster: clusterIndex
+                    });
+                }
+            });
+
+            clusteringChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: clusterScenarios.map((cluster, index) => ({
+                        label: cluster.name,
+                        data: dataPoints.filter(p => p.cluster === index),
+                        backgroundColor: getClusterColor(cluster.color),
+                        borderColor: getClusterColor(cluster.color, 0.8),
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '土壤湿度 (%)'
+                            },
+                            min: 30,
+                            max: 90
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '空气温度 (°C)'
+                            },
+                            min: 20,
+                            max: 32
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const point = context.raw;
+                                    return [
+                                        `湿度: ${point.x.toFixed(1)}%`,
+                                        `温度: ${point.y.toFixed(1)}°C`
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 更新聚类数量
+        function updateClusters(k) {
+            const progress = document.getElementById('clusteringProgress');
+            const progressBar = document.getElementById('clusteringProgressBar');
+            
+            // 模拟聚类过程
+            let progressValue = 0;
+            const interval = setInterval(() => {
+                progressValue += 5;
+                progress.textContent = progressValue + '%';
+                progressBar.style.width = progressValue + '%';
+                
+                if (progressValue >= 100) {
+                    clearInterval(interval);
+                    showNotification(`成功划分 ${k} 个聚类场景`, 'success');
+                    
+                    // 更新场景数据
+                    updateClusterScenarios(k);
+                    renderClusterDetails();
+                }
+            }, 100);
+        }
+
+        // 更新聚类场景
+        function updateClusterScenarios(k) {
+            const newScenarios = [];
+            const colors = ['blue', 'green', 'red', 'purple', 'orange'];
+            
+            for (let i = 0; i < k; i++) {
+                newScenarios.push({
+                    name: `场景 ${i + 1}`,
+                    color: colors[i % colors.length],
+                    center: {
+                        moisture: 40 + i * 15,
+                        temp: 22 + i * 2,
+                        stage: (i % 3) + 1
+                    },
+                    description: `聚类算法识别的新场景`,
+                    waterNeed: ['低', '中', '高'][i % 3],
+                    sampleCount: Math.floor(Math.random() * 200) + 100,
+                    avgMoisture: (45 + i * 10) + '%',
+                    avgTemp: (22 + i * 2) + '°C'
+                });
+            }
+            
+            clusterScenarios.splice(0, clusterScenarios.length, ...newScenarios);
+            
+            // 更新图表
+            updateClusteringChartData();
+        }
+
+        // 更新聚类图表数据
+        function updateClusteringChartData() {
+            const dataPoints = [];
+            clusterScenarios.forEach((cluster, clusterIndex) => {
+                for (let i = 0; i < cluster.sampleCount / 10; i++) {
+                    dataPoints.push({
+                        x: cluster.center.moisture + (Math.random() - 0.5) * 20,
+                        y: cluster.center.temp + (Math.random() - 0.5) * 6,
+                        cluster: clusterIndex
+                    });
+                }
+            });
+
+            clusteringChart.data.datasets = clusterScenarios.map((cluster, index) => ({
+                label: cluster.name,
+                data: dataPoints.filter(p => p.cluster === index),
+                backgroundColor: getClusterColor(cluster.color),
+                borderColor: getClusterColor(cluster.color, 0.8),
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }));
+
+            clusteringChart.update();
+        }
+
+        // 渲染聚类详情
+        function renderClusterDetails() {
+            const container = document.getElementById('clusterDetails');
+            container.innerHTML = '';
+            
+            clusterScenarios.forEach((cluster, index) => {
+                const card = document.createElement('div');
+                card.className = 'cluster-node bg-white border-l-4 p-4 rounded-r-lg shadow-sm hover:shadow-md transition-all duration-300';
+                card.style.borderLeftColor = getClusterColor(cluster.color);
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-bold text-gray-800">${cluster.name}</h4>
+                            <p class="text-sm text-gray-600">需水等级: <span class="font-bold text-${cluster.color}-600">${cluster.waterNeed}</span></p>
+                        </div>
+                        <span class="bg-${cluster.color}-100 text-${cluster.color}-800 text-xs px-2 py-1 rounded-full">
+                            ${cluster.sampleCount}个样本
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-700 mb-3">${cluster.description}</p>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-gray-50 p-2 rounded">
+                            <p class="text-gray-500">平均湿度</p>
+                            <p class="font-bold">${cluster.avgMoisture}</p>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded">
+                            <p class="text-gray-500">平均温度</p>
+                            <p class="font-bold">${cluster.avgTemp}</p>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button onclick="selectScenario(${index})" class="w-full text-sm bg-${cluster.color}-50 hover:bg-${cluster.color}-100 text-${cluster.color}-700 py-2 rounded transition">
+                            应用此场景
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // 选择场景
+        function selectScenario(index) {
+            const scenario = clusterScenarios[index];
+            document.getElementById('waterNeedLevel').textContent = scenario.waterNeed;
+            document.getElementById('waterNeedBar').style.width = 
+                scenario.waterNeed === '高' ? '85%' : 
+                scenario.waterNeed === '中' ? '60%' : '30%';
+            
+            // 自动设置相关参数
+            const deviation = scenario.waterNeed === '高' ? -40 : 
+                            scenario.waterNeed === '中' ? -20 : 10;
+            document.getElementById('soilDeviation').value = deviation;
+            document.getElementById('soilDeviationValue').textContent = deviation + '%';
+            
+            updateRealTimeControl();
+            showNotification(`已应用${scenario.name}`, 'success');
+        }
+
+        // 渲染模糊规则
+        function renderFuzzyRules() {
+            const container = document.getElementById('fuzzyRules');
+            container.innerHTML = '';
+            
+            fuzzyRules.forEach((rule, index) => {
+                const card = document.createElement('div');
+                card.className = `fuzzy-rule-card bg-white border p-4 rounded-lg ${rule.active ? 'border-blue-200 bg-blue-50' : 'border-gray-200 bg-gray-50'}`;
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-800 mb-1">规则 #${rule.id}</h4>
+                            <div class="text-sm">
+                                <span class="text-gray-600">IF</span>
+                                <span class="font-medium text-blue-700 mx-1">${rule.condition}</span>
+                                <span class="text-gray-600">→ THEN</span>
+                                <span class="font-medium text-green-700 ml-1">${rule.action}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="toggleRule(${index})" class="w-8 h-8 flex items-center justify-center rounded ${rule.active ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}">
+                                <i class="fa-solid ${rule.active ? 'fa-toggle-on' : 'fa-toggle-off'}"></i>
+                            </button>
+                            <button onclick="editRule(${index})" class="w-8 h-8 flex items-center justify-center rounded bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                <i class="fa-solid fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-xs text-gray-500">
+                        <div class="flex items-center mr-4">
+                            <div class="w-2 h-2 rounded-full ${rule.active ? 'bg-green-500' : 'bg-red-500'} mr-1"></div>
+                            <span>${rule.active ? '激活' : '禁用'}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-bolt text-yellow-500 mr-1"></i>
+                            <span>匹配度: ${Math.floor(Math.random() * 20) + 80}%</span>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // 添加新规则
+        function addNewRule() {
+            const newId = fuzzyRules.length + 1;
+            fuzzyRules.push({
+                id: newId,
+                condition: "需水等级中 AND 偏差正小",
+                action: "灌溉短 AND 流量小",
+                active: true
+            });
+            renderFuzzyRules();
+            showNotification('新规则已添加', 'success');
+        }
+
+        // 切换规则状态
+        function toggleRule(index) {
+            fuzzyRules[index].active = !fuzzyRules[index].active;
+            renderFuzzyRules();
+        }
+
+        // 编辑规则
+        function editRule(index) {
+            const rule = fuzzyRules[index];
+            const newCondition = prompt('请输入条件部分:', rule.condition);
+            if (newCondition) {
+                const newAction = prompt('请输入动作部分:', rule.action);
+                if (newAction) {
+                    rule.condition = newCondition;
+                    rule.action = newAction;
+                    renderFuzzyRules();
+                    showNotification('规则已更新', 'success');
+                }
+            }
+        }
+
+        // 设置生长阶段
+        function setGrowthStage(stage) {
+            currentGrowthStage = stage;
+            document.querySelectorAll('button[onclick^="setGrowthStage"]').forEach(btn => {
+                btn.className = btn.className.replace('bg-teal-100 border-teal-300 text-teal-700', 'border-gray-300 hover:bg-gray-50');
+                btn.className = btn.className.replace('hover:bg-gray-50', '');
+            });
+            
+            event.target.className = 'flex-1 py-2 rounded bg-teal-100 border border-teal-300 text-teal-700';
+            updateRealTimeControl();
+        }
+
+        // 更新实时控制
+        function updateRealTimeControl() {
+            const deviation = parseInt(document.getElementById('soilDeviation').value);
+            const waterNeed = document.getElementById('waterNeedLevel').textContent;
+            
+            // 更新显示值
+            document.getElementById('soilDeviationValue').textContent = deviation + '%';
+            
+            // 计算隶属度
+            const membershipHigh = Math.max(0, Math.min(100, 100 - deviation * 2));
+            const membershipNegative = deviation < 0 ? Math.min(100, Math.abs(devidence)) : 0;
+            
+            document.getElementById('membershipHigh').textContent = membershipHigh + '%';
+            document.getElementById('membershipNegative').textContent = membershipNegative + '%';
+            
+            // 更新进度条
+            document.querySelector('#membershipHigh').parentElement.nextElementSibling.querySelector('div').style.width = membershipHigh + '%';
+            document.querySelector('#membershipNegative').parentElement.nextElementSibling.querySelector('div').style.width = membershipNegative + '%';
+            
+            // 计算推理强度（最小运算）
+            const inferenceStrength = Math.min(membershipHigh, membershipNegative);
+            document.getElementById('inferenceStrength').textContent = inferenceStrength;
+            
+            // 更新环形进度条
+            const ring = document.getElementById('inferenceRing');
+            const circumference = 2 * Math.PI * 35;
+            const offset = circumference - (circumference * inferenceStrength / 100);
+            ring.style.strokeDashoffset = offset;
+            
+            // 匹配最佳规则
+            let bestRule = fuzzyRules[0];
+            let maxMatch = 0;
+            
+            fuzzyRules.forEach(rule => {
+                if (rule.active) {
+                    // 简单匹配逻辑
+                    const matchScore = Math.random() * 20 + 70;
+                    if (matchScore > maxMatch) {
+                        maxMatch = matchScore;
+                        bestRule = rule;
+                    }
+                }
+            });
+            
+            document.getElementById('matchedRule').textContent = 
+                `IF ${bestRule.condition} → THEN ${bestRule.action}`;
+            
+            // 计算输出值
+            calculateOutputs(waterNeed, deviation, inferenceStrength);
+        }
+
+        // 计算输出值
+        function calculateOutputs(waterNeed, deviation, strength) {
+            let time = 20; // 默认20分钟
+            let flow = 4;  // 默认4 L/min
+            
+            // 根据规则调整
+            if (waterNeed === '高' && deviation < -30) {
+                time = 35 + strength / 3;
+                flow = 6 + strength / 20;
+            } else if (waterNeed === '高' && deviation < 0) {
+                time = 25 + strength / 4;
+                flow = 5 + strength / 25;
+            } else if (waterNeed === '中' && deviation < -20) {
+                time = 20 + strength / 5;
+                flow = 4 + strength / 30;
+            } else if (waterNeed === '低' || deviation > 10) {
+                time = 5;
+                flow = 2;
+            }
+            
+            // 限制范围
+            time = Math.max(5, Math.min(40, Math.round(time)));
+            flow = Math.max(2, Math.min(8, Math.round(flow * 10) / 10));
+            
+            // 更新显示
+            document.getElementById('outputTime').textContent = time + '分钟';
+            document.getElementById('outputFlow').textContent = flow + ' L/min';
+            
+            // 更新进度条
+            document.getElementById('timeBar').style.width = ((time - 5) / 35 * 100) + '%';
+            document.getElementById('flowBar').style.width = ((flow - 2) / 6 * 100) + '%';
+            
+            // 更新顶部显示
+            document.getElementById('irrigationTime').textContent = time + ' min';
+            document.getElementById('irrigationFlow').textContent = flow + ' L/min';
+        }
+
+        // 执行灌溉
+        function executeIrrigation() {
+            const time = document.getElementById('outputTime').textContent;
+            const flow = document.getElementById('outputFlow').textContent;
+            
+            showNotification(`开始执行灌溉: ${time}, 流量: ${flow}`, 'success');
+            
+            // 模拟执行过程
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>执行中...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                showNotification('灌溉执行完成！', 'success');
+            }, 2000);
+        }
+
+        // 启动分析
+        function startAnalysis() {
+            showNotification('开始聚类模糊分析...', 'info');
+            
+            // 模拟分析过程
+            updateClusters(3);
+            
+            setTimeout(() => {
+                selectScenario(0);
+                updateRealTimeControl();
+                showNotification('聚类模糊分析完成！', 'success');
+            }, 3000);
+        }
+
+        // 工具函数
+        function getClusterColor(color, alpha = 0.6) {
+            const colors = {
+                blue: `rgba(59, 130, 246, ${alpha})`,
+                green: `rgba(34, 197, 94, ${alpha})`,
+                red: `rgba(239, 68, 68, ${alpha})`,
+                purple: `rgba(147, 51, 234, ${alpha})`,
+                orange: `rgba(249, 115, 22, ${alpha})`
+            };
+            return colors[color] || colors.blue;
+        }
+
+        function showNotification(message, type = 'info') {
+            // 移除现有通知
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+            
+            const colors = {
+                success: 'bg-green-100 border-green-400 text-green-700',
+                error: 'bg-red-100 border-red-400 text-red-700',
+                warning: 'bg-yellow-100 border-yellow-400 text-yellow-700',
+                info: 'bg-blue-100 border-blue-400 text-blue-700'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-4 right-4 px-4 py-3 rounded-lg border shadow-lg z-50 ${colors[type]}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fa-solid fa-${type === 'success' ? 'check-circle' : 'info-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

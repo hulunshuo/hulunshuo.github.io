@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - 乡业绿禾灌溉科技有限公司</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#16A34A',
+                        secondary: '#0EA5E9',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        brand: '#0F766E'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .card-shadow {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .bg-gradient-brand {
+                background: linear-gradient(135deg, #0F766E 0%, #16A34A 100%);
+            }
+            .hover-lift {
+                transition: transform 0.3s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-5px);
+            }
+            .sidebar-link.active {
+                background: rgba(15, 118, 110, 0.1);
+                border-left: 4px solid #0F766E;
+                font-weight: bold;
+            }
+            .timeline-item {
+                position: relative;
+                padding-left: 2rem;
+            }
+            .timeline-item:before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0.5rem;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #0F766E;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white card-shadow sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <nav class="flex justify-between items-center py-4">
+                <!-- Logo区域 -->
+                <a href="index.html" class="flex items-center space-x-3">
+                    <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ae10c927211a4d40a7ce83dc0d6d62b0.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260203224317F56453BF2EEA2D01E594&rrcfp=dafada99&x-expires=2086353797&x-signature=eTC2QeGqQdxxHpf5UMQFHG7AwFk%3D" 
+                         alt="乡业绿禾灌溉科技有限公司" 
+                         class="h-12 w-auto rounded">
+                    <div>
+                        <h1 class="text-xl font-bold text-brand">乡业绿禾</h1>
+                        <p class="text-xs text-gray-500">灌溉科技有限公司</p>
+                    </div>
+                </a>
+                
+                <!-- 返回主页按钮 -->
+                <a href="index.html" class="bg-brand hover:bg-brand/90 text-white px-4 py-2 rounded-lg flex items-center transition">
+                    <i class="fa-solid fa-home mr-2"></i>返回系统
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 固定侧边栏导航 -->
+    <div class="fixed right-4 top-1/2 transform -translate-y-1/2 z-40 hidden lg:block">
+        <div class="bg-white rounded-xl card-shadow w-64 overflow-hidden">
+            <div class="bg-gradient-brand text-white p-4">
+                <h3 class="font-bold text-lg flex items-center">
+                    <i class="fa-solid fa-building mr-2"></i>公司信息导航
+                </h3>
+                <p class="text-xs opacity-90 mt-1">快速访问公司战略与规划</p>
+            </div>
+            
+            <div class="max-h-[60vh] overflow-y-auto p-2">
+                <!-- 基础信息 -->
+                <div class="mb-4">
+                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">基础信息</h4>
+                    <a href="#company-intro" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-info-circle mr-2 text-brand"></i>公司简介
+                    </a>
+                    <a href="#core-values" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-star mr-2 text-brand"></i>核心价值观
+                    </a>
+                    <a href="#technology" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-microchip mr-2 text-brand"></i>核心技术
+                    </a>
+                </div>
+                
+                <!-- 公司战略 -->
+                <div class="mb-4">
+                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">公司战略</h4>
+                    <a href="#company-vision" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-bullseye mr-2 text-brand"></i>1.1 公司愿景
+                    </a>
+                    <a href="#company-mission" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-flag mr-2 text-brand"></i>1.2 公司使命
+                    </a>
+                    <a href="#company-policy" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-compass mr-2 text-brand"></i>1.3 发展方针
+                    </a>
+                    <a href="#hr-strategy" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-users mr-2 text-brand"></i>1.4 人力资源战略
+                    </a>
+                    <a href="#swot-analysis" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-chart-bar mr-2 text-brand"></i>1.5 SWOT分析
+                    </a>
+                    <a href="#development-strategy" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-route mr-2 text-brand"></i>1.6 企业发展战略
+                    </a>
+                </div>
+                
+                <!-- 营销与运营 -->
+                <div>
+                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 py-1">营销与运营</h4>
+                    <a href="#marketing-strategy" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-chart-line mr-2 text-brand"></i>2. 营销策略
+                    </a>
+                    <a href="#operation" class="sidebar-link flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition">
+                        <i class="fa-solid fa-cogs mr-2 text-brand"></i>3. 公司运营
+                    </a>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 p-3 text-center border-t">
+                <button onclick="scrollToTop()" class="text-xs text-gray-600 hover:text-brand transition">
+                    <i class="fa-solid fa-arrow-up mr-1"></i>返回顶部
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="flex-1">
+        <!-- 公司横幅 -->
+        <section class="bg-gradient-brand text-white py-16">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">乡业绿禾灌溉科技有限公司</h1>
+                <p class="text-xl md:text-2xl opacity-90">科技赋能，节水兴农</p>
+                <p class="mt-4 text-lg opacity-80">致力于打造最智能、最高效的农业灌溉解决方案</p>
+            </div>
+        </section>
+
+        <!-- 公司简介 -->
+        <section class="py-16" id="company-intro">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 md:p-12 card-shadow">
+                        <h2 class="text-3xl font-bold text-brand mb-8 text-center">公司简介</h2>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-bullseye mr-3"></i>发展理念
+                                </h3>
+                                <p class="text-gray-700 text-lg leading-relaxed">
+                                    <span class="font-bold">乡业绿禾灌溉科技有限公司是一家拟建中的企业</span>，秉承着
+                                    <span class="text-brand font-semibold">"科技赋能，节水兴农"</span>的发展理念；
+                                    奉行<span class="text-brand font-semibold">"精准灌溉、绿色生态、智慧农业"</span>的核心价值观；
+                                    坚持以技术创新为先导，走产学研用深度融合的发展道路；以高效的管理为基础，达到经济效益、社会效益、生态效益协同提升的效果。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-industry mr-3"></i>市场背景
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    在农业现代化转型与水资源集约利用的双重需求驱动下，传统农业灌溉模式的短板日益凸显。
+                                    <span class="font-semibold">我国农业用水占总用水量的60%以上，但灌溉利用率仅为40%左右</span>，
+                                    漫灌、定时灌溉等粗放方式不仅造成水资源严重浪费，还易引发土壤盐碱化、作物生长不均等问题；
+                                    同时，传统灌溉高度依赖人工经验，人力成本高、效率低，难以适配规模化、精细化的现代农业种植需求。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-chart-line mr-3"></i>政策与市场机遇
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    从政策层面来看，<span class="font-semibold">国家连续多年在中央一号文件中强调发展智慧农业、推进高标准农田建设</span>，
+                                    多地出台节水灌溉补贴政策，鼓励农业生产技术升级；从市场层面，家庭农场、农业合作社等新型经营主体快速崛起，
+                                    对智能灌溉设备的需求持续增长，但现有市场产品多存在依赖网络、阈值控制僵化、成本偏高等问题，
+                                    难以满足偏远地区中小农户的实际使用需求。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-lightbulb mr-3"></i>解决方案
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    在此背景下，结合西安及周边地区农田分布特点与种植结构，本团队研发
+                                    <span class="font-semibold text-brand">多元数据下的人工智能灌溉系统</span>，
+                                    通过算法创新与硬件轻量化设计，解决传统灌溉与常规智能灌溉的痛点，
+                                    实现精准、节水、低成本的农业灌溉，助力区域农业绿色可持续发展。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-rocket mr-3"></i>未来发展
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    公司持续投入技术研发与产品迭代，通过融合多源农业数据优化灌溉模型，
+                                    实现产品功能的不断升级与场景的持续拓展，以增强在智慧农业领域的核心竞争力。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 公司价值观 -->
+        <section class="py-16 bg-white" id="core-values">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-brand mb-12">核心价值观</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                    <!-- 精准灌溉 -->
+                    <div class="bg-gradient-brand text-white rounded-2xl p-8 hover-lift">
+                        <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa-solid fa-droplet text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-center">精准灌溉</h3>
+                        <p class="text-white/90 leading-relaxed text-center">
+                            基于大数据与人工智能算法，实现按需灌溉、精准控制，最大限度提高水资源利用效率。
+                        </p>
+                    </div>
+
+                    <!-- 绿色生态 -->
+                    <div class="bg-gradient-brand text-white rounded-2xl p-8 hover-lift">
+                        <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa-solid fa-leaf text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-center">绿色生态</h3>
+                        <p class="text-white/90 leading-relaxed text-center">
+                            保护生态环境，减少化肥农药流失，维护土壤健康，促进农业可持续发展。
+                        </p>
+                    </div>
+
+                    <!-- 智慧农业 -->
+                    <div class="bg-gradient-brand text-white rounded-2xl p-8 hover-lift">
+                        <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa-solid fa-brain text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-center">智慧农业</h3>
+                        <p class="text-white/90 leading-relaxed text-center">
+                            融合物联网、大数据、人工智能技术，推动农业生产智能化、管理精细化、决策科学化。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 公司优势 -->
+        <section class="py-16">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-brand mb-12">技术优势</h2>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-microchip text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold">智能算法</h3>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">
+                                自主研发的AI灌溉算法，能够根据作物生长阶段、土壤条件、气象数据等多源信息，智能决策最佳灌溉方案。
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-sensor text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold">轻量化硬件</h3>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">
+                                针对偏远地区网络条件有限的环境，研发低功耗、低成本、易部署的智能灌溉硬件设备。
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-database text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold">多元数据融合</h3>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">
+                                整合土壤湿度、气象预报、作物生长模型等多维度数据，构建精准的灌溉决策模型。
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold">成本效益</h3>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">
+                                相比传统灌溉可节水30-50%，减少人工成本60%以上，帮助农户实现经济效益最大化。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心技术实现：聚类分析+模糊控制 -->
+        <section class="py-16 bg-white" id="technology">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-brand mb-12">核心技术实现：聚类分析 + 模糊控制</h2>
+                
+                <div class="max-w-5xl mx-auto">
+                    <!-- 技术架构概览 -->
+                    <div class="bg-gradient-brand text-white rounded-2xl p-8 mb-10">
+                        <h3 class="text-2xl font-bold mb-6 text-center">双引擎智能决策架构</h3>
+                        <p class="text-lg leading-relaxed text-center opacity-90">
+                            本系统采用 <span class="font-bold">"聚类分析 + 模糊控制"</span> 双引擎技术架构，实现从数据感知到智能决策的完整闭环，
+                            确保灌溉策略既精准又适应农田复杂多变的环境。
+                        </p>
+                    </div>
+
+                    <!-- 技术实现步骤 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- 聚类分析部分 -->
+                        <div class="bg-brand/5 p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-14 h-14 rounded-full bg-brand/20 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-chart-pie text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold">聚类分析</h3>
+                                    <p class="text-gray-600 text-sm mt-1">数据分类与场景划分技术</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-database mr-2"></i>数据采集与预处理
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li><i class="fa-solid fa-check text-brand mr-2"></i><strong>采集对象：</strong>土壤湿度、空气温湿度、光照、降雨量、作物生长阶段</li>
+                                        <li><i class="fa-solid fa-check text-brand mr-2"></i><strong>预处理：</strong>剔除异常数据，统一量纲标准化(0-1区间)</li>
+                                        <li><i class="fa-solid fa-check text-brand mr-2"></i><strong>采样频率：</strong>每10分钟采集一次，确保数据实时性</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-object-group mr-2"></i>K-Means聚类划分
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li><i class="fa-solid fa-chart-line text-brand mr-2"></i><strong>特征维度：</strong>土壤湿度、空气湿度、作物生长阶段为核心特征</li>
+                                        <li><i class="fa-solid fa-chart-line text-brand mr-2"></i><strong>典型场景划分：</strong></li>
+                                        <li class="ml-6"><span class="font-semibold">场景1：</span>高湿度+成熟期 → 低需水组</li>
+                                        <li class="ml-6"><span class="font-semibold">场景2：</span>中湿度+成株期 → 中需水组</li>
+                                        <li class="ml-6"><span class="font-semibold">场景3：</span>低湿度+幼苗期 → 高需水组</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-bullseye mr-2"></i>场景标签输出
+                                    </h4>
+                                    <p class="text-gray-700 text-sm">
+                                        为每个聚类结果打上"需水等级标签"，作为模糊控制的输入前提，实现数据驱动的场景感知。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 模糊控制部分 -->
+                        <div class="bg-brand/5 p-8 rounded-2xl card-shadow hover-lift">
+                            <div class="flex items-center mb-6">
+                                <div class="w-14 h-14 rounded-full bg-brand/20 flex items-center justify-center text-brand mr-4">
+                                    <i class="fa-solid fa-brain text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold">模糊控制</h3>
+                                    <p class="text-gray-600 text-sm mt-1">智能决策与精准执行技术</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-sliders mr-2"></i>模糊规则库构建
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li><i class="fa-solid fa-list-check text-brand mr-2"></i><strong>输入变量：</strong>需水等级(低/中/高)、土壤湿度偏差</li>
+                                        <li><i class="fa-solid fa-list-check text-brand mr-2"></i><strong>输出变量：</strong>灌溉时长(短/中/长)、流量(小/中/大)</li>
+                                        <li><i class="fa-solid fa-list-check text-brand mr-2"></i><strong>规则示例：</strong></li>
+                                        <li class="ml-6 text-xs"><code>IF 需水等级高 AND 湿度偏差负大 → THEN 时长短 AND 流量大</code></li>
+                                        <li class="ml-6 text-xs"><code>IF 需水等级中 AND 湿度偏差负中 → THEN 时长中 AND 流量中</code></li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-gears mr-2"></i>模糊推理与解模糊
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li><i class="fa-solid fa-calculator text-brand mr-2"></i><strong>推理方法：</strong>Mamdani模糊推理算法</li>
+                                        <li><i class="fa-solid fa-calculator text-brand mr-2"></i><strong>解模糊：</strong>重心法(COG)转换模糊量为精确值</li>
+                                        <li><i class="fa-solid fa-calculator text-brand mr-2"></i><strong>输出示例：</strong>"时长-长" → 30分钟，"流量-大" → 5L/min</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-repeat mr-2"></i>反馈优化机制
+                                    </h4>
+                                    <p class="text-gray-700 text-sm">
+                                        灌溉后持续监测数据，验证效果并反馈至聚类样本库，
+                                        定期优化模糊规则，实现系统自学习与自适应进化。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 技术优势总结 -->
+                    <div class="mt-12 bg-gradient-brand text-white rounded-2xl p-8">
+                        <h3 class="text-2xl font-bold mb-6 text-center">技术优势对比</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-white">
+                                <thead>
+                                    <tr class="border-b border-white/30">
+                                        <th class="py-3 px-4 text-left">对比维度</th>
+                                        <th class="py-3 px-4 text-left">传统阈值控制</th>
+                                        <th class="py-3 px-4 text-left">聚类+模糊控制</th>
+                                        <th class="py-3 px-4 text-left">提升效果</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-white/20">
+                                        <td class="py-3 px-4 font-semibold">决策精度</td>
+                                        <td class="py-3 px-4">固定阈值，一刀切</td>
+                                        <td class="py-3 px-4">多维度综合决策</td>
+                                        <td class="py-3 px-4 text-green-300 font-bold">提升65%</td>
+                                    </tr>
+                                    <tr class="border-b border-white/20">
+                                        <td class="py-3 px-4 font-semibold">节水率</td>
+                                        <td class="py-3 px-4">20-30%</td>
+                                        <td class="py-3 px-4">40-60%</td>
+                                        <td class="py-3 px-4 text-green-300 font-bold">提升100%</td>
+                                    </tr>
+                                    <tr class="border-b border-white/20">
+                                        <td class="py-3 px-4 font-semibold">场景适应性</td>
+                                        <td class="py-3 px-4">单一场景固定策略</td>
+                                        <td class="py-3 px-4">动态适应多种场景</td>
+                                        <td class="py-3 px-4 text-green-300 font-bold">提升80%</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-4 font-semibold">人工干预频率</td>
+                                        <td class="py-3 px-4">每天需调整</td>
+                                        <td class="py-3 px-4">每月优化一次</td>
+                                        <td class="py-3 px-4 text-green-300 font-bold">减少90%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 技术流程图 -->
+                    <div class="mt-12 bg-white rounded-2xl p-8 card-shadow">
+                        <h3 class="text-2xl font-bold text-center text-brand mb-8">技术实现流程图</h3>
+                        <div class="relative">
+                            <!-- 流程图 -->
+                            <div class="flex flex-col items-center">
+                                <!-- 步骤1 -->
+                                <div class="bg-brand/10 p-6 rounded-lg w-full max-w-2xl mb-6">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold mr-4">1</div>
+                                        <div>
+                                            <h4 class="font-bold text-lg">数据采集与预处理</h4>
+                                            <p class="text-gray-600 text-sm">多传感器实时采集，标准化处理</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 箭头1 -->
+                                <div class="text-brand text-2xl mb-6">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </div>
+                                
+                                <!-- 步骤2 -->
+                                <div class="bg-brand/10 p-6 rounded-lg w-full max-w-2xl mb-6">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold mr-4">2</div>
+                                        <div>
+                                            <h4 class="font-bold text-lg">K-Means聚类分析</h4>
+                                            <p class="text-gray-600 text-sm">划分需水场景，打标签</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 箭头2 -->
+                                <div class="text-brand text-2xl mb-6">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </div>
+                                
+                                <!-- 步骤3 -->
+                                <div class="bg-brand/10 p-6 rounded-lg w-full max-w-2xl mb-6">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold mr-4">3</div>
+                                        <div>
+                                            <h4 class="font-bold text-lg">模糊控制决策</h4>
+                                            <p class="text-gray-600 text-sm">模糊推理，输出灌溉参数</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 箭头3 -->
+                                <div class="text-brand text-2xl mb-6">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </div>
+                                
+                                <!-- 步骤4 -->
+                                <div class="bg-brand/10 p-6 rounded-lg w-full max-w-2xl mb-6">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold mr-4">4</div>
+                                        <div>
+                                            <h4 class="font-bold text-lg">精准执行灌溉</h4>
+                                            <p class="text-gray-600 text-sm">控制水泵阀门，按需灌溉</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 箭头4 -->
+                                <div class="text-brand text-2xl mb-6">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </div>
+                                
+                                <!-- 步骤5 -->
+                                <div class="bg-brand/10 p-6 rounded-lg w-full max-w-2xl">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold mr-4">5</div>
+                                        <div>
+                                            <h4 class="font-bold text-lg">数据反馈优化</h4>
+                                            <p class="text-gray-600 text-sm">持续监测，闭环优化系统</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 text-center">
+                            <p class="text-gray-700 font-semibold">
+                                <i class="fa-solid fa-lightbulb text-brand mr-2"></i>
+                                技术亮点：聚类分析实现数据智能分组，模糊控制模拟人类决策思维，
+                                两者结合让灌溉系统真正具备"智能"与"适应"能力
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 新增内容开始 ========== -->
+
+        <!-- 公司愿景 -->
+        <section class="py-16" id="company-vision">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 md:p-12 card-shadow">
+                        <h2 class="text-3xl font-bold text-brand mb-8 text-center flex items-center justify-center">
+                            <i class="fa-solid fa-bullseye mr-3"></i>1.1 公司愿景
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-globe mr-3"></i>成为全球复杂环境智能种植决策的领导者
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    在未来6-10年内，成为中国智慧农业领域，尤其是在梯田、荒漠、设施农业等复杂场景下，智能灌溉决策系统的首选品牌与核心解决方案提供商。
+                                </p>
+                                <p class="text-gray-700 leading-relaxed mt-4">
+                                    展望未来10年，致力于构建以"感知-决策-执行"一体化AI农业大脑为核心的科技集团，推动全球农业生产向自适应、可持续的精准化模式演进。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 公司使命 -->
+        <section class="py-16 bg-white" id="company-mission">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 md:p-12 card-shadow">
+                        <h2 class="text-3xl font-bold text-brand mb-8 text-center flex items-center justify-center">
+                            <i class="fa-solid fa-flag mr-3"></i>1.2 公司使命
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-users mr-3"></i>客户
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    我们的使命是通过提供闭环智能决策系统，帮助客户应对地形、气候及水资源的挑战，显著降低生产风险与资源消耗，持续提升农林业产值与生态效益，成为客户实现稳健增长与绿色转型的可靠伙伴。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-user-tie mr-3"></i>员工
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    员工是公司最宝贵的资产。我们致力于提供安全、包容、充满挑战的工作环境，保障每位员工的权益，并通过清晰的职业发展路径和持续的技能培训，激发创新潜能，实现个人与公司的共同成长。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-box mr-3"></i>产品
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    我们专注于研发与迭代灌溉管理系统，确保其可靠性、精准性与领先性。通过核心算法与硬件的不断进化，解决传统农业的痛点，并积极拓展系统在生态修复、城市绿化等新场景的应用，创造多元价值。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-handshake mr-3"></i>社会
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    我们积极践行社会责任，通过推广节水节能的智能农业技术，助力国家粮食安全、水资源保护与荒漠化治理战略。我们承诺诚信经营，保护环境，并参与公益事业，为创造更可持续的未来贡献力量。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-chart-line mr-3"></i>股东
+                                </h3>
+                                <p class="text-gray-700 leading-relaxed">
+                                    我们致力于通过持续的创新、高效的管理和稳健的扩张，实现公司资产的长期增值，为股东提供富有竞争力的投资回报。我们将保持透明的沟通，善用每一分资本，赢得并维系股东的长期信任与支持。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 公司发展方针 -->
+        <section class="py-16" id="company-policy">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 md:p-12 card-shadow">
+                        <h2 class="text-3xl font-bold text-brand mb-8 text-center flex items-center justify-center">
+                            <i class="fa-solid fa-compass mr-3"></i>1.3 公司发展方针
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-award mr-3"></i>质量方针
+                                </h3>
+                                <p class="text-gray-700">
+                                    视系统稳定性与决策精准性为生命线，打造超越客户期待的高可靠性产品，以卓越品质赢取市场口碑。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-leaf mr-3"></i>环境方针
+                                </h3>
+                                <p class="text-gray-700">
+                                    践行"科技赋能绿色农业"的理念，所有产品研发与运营活动均以提升资源利用效率、减少环境负担为核心准则。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-user-check mr-3"></i>成就客户
+                                </h3>
+                                <p class="text-gray-700">
+                                    深入田间地头，理解客户真实场景，不仅提供产品，更提供全天候的技术支持与数据服务，确保客户成功应用并获益。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-lightbulb mr-3"></i>不断创新
+                                </h3>
+                                <p class="text-gray-700">
+                                    建立以市场需求与前沿技术双轮驱动的研发体系，鼓励跨界思维，在传感器融合、AI算法、控制执行等关键环节持续突破。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-shield-alt mr-3"></i>诚信负责
+                                </h3>
+                                <p class="text-gray-700">
+                                    对客户托付的每一块土地、每一组数据负责，恪守商业道德，保障数据安全与隐私，建立坚不可摧的信任纽带。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-people-arrows mr-3"></i>团结协作
+                                </h3>
+                                <p class="text-gray-700">
+                                    倡导开放、协同的团队文化，打破部门墙，整合研发、市场、运营力量，以高效协作应对复杂挑战。
+                                </p>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl md:col-span-2">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-trophy mr-3"></i>追求卓越
+                                </h3>
+                                <p class="text-gray-700">
+                                    永不满足于现状，在技术、管理、服务的每一个细节上追求极致，树立行业标杆。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 人力资源战略 -->
+        <section class="py-16 bg-white" id="hr-strategy">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 md:p-12 card-shadow">
+                        <h2 class="text-3xl font-bold text-brand mb-8 text-center flex items-center justify-center">
+                            <i class="fa-solid fa-users mr-3"></i>1.4 人力资源战略
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3">21世纪知识经济时代的人力资源管理定位</h3>
+                                <p class="text-gray-700 mb-4">
+                                    21世纪是一个知识经济时代，这个时代在为人力资源管理提供发展空间的同时，也对人力资源管理提出了新的要求。完善的人力资源管理将为企业获取竞争优势提供支援，想要达到此目标，公司必须根据自身实际情况，从下面四个方面进行人力资源管理定位：
+                                </p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2 flex items-center">
+                                            <i class="fa-solid fa-chess-board mr-2"></i>1. 全局战略性
+                                        </h4>
+                                        <p class="text-gray-700 text-sm">
+                                            公司要扭转以往的人力资源管理观念，注重具有战略意义的人力资源管理实质性内容，防止把大部分时间都花在一些毫无意义的例行工作上。
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2 flex items-center">
+                                            <i class="fa-solid fa-random mr-2"></i>2. 灵活性
+                                        </h4>
+                                        <p class="text-gray-700 text-sm">
+                                            公司在制定人力资源管理体系的时候，必须注重人力资源管理的灵活性。在这个不断变化发展的时代，公司必须很快地适应外界环境的变化。
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2 flex items-center">
+                                            <i class="fa-solid fa-bolt mr-2"></i>3. 高效性
+                                        </h4>
+                                        <p class="text-gray-700 text-sm">
+                                            公司必须引进科学合理的方法来对公司在人力资源和人力资源管理上面的投入产出比进行评估，进一步提高人力资源管理的效率和效果。
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2 flex items-center">
+                                            <i class="fa-solid fa-user-check mr-2"></i>4. 客户导向
+                                        </h4>
+                                        <p class="text-gray-700 text-sm">
+                                            一定要认识到人力资源管理存在的基础不仅是为员工提供服务，而且也必须为客户服务。因此，公司人力资源管理必须高度重视自己的客户——员工。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3">战略性人力资源管理实施阶段</h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2 flex items-center">
+                                            <i class="fa-solid fa-seedling mr-2"></i>1. 初期战略（第1-2年）
+                                        </h4>
+                                        <p class="text-gray-700">
+                                            聚焦于核心团队的构建与融合。人力资源向技术研发与标杆项目市场开拓部门重点倾斜。创始人及核心高管需深入一线，亲自参与技术路线制定与首批重点客户攻关。建立与项目效益强绑定的激励制度，快速凝聚战斗力。
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2 flex items-center">
+                                            <i class="fa-solid fa-tree mr-2"></i>2. 中期战略（第3-5年）
+                                        </h4>
+                                        <p class="text-gray-700">
+                                            体系化建设阶段。全面推行规范化的人力资源管理体系，根据全国市场扩张的需要，大规模引进优秀的区域销售经理、解决方案工程师及核心研发人才。特别注重引入具有农业知识与IT技术背景的复合型人才，并设立"创新奖励基金"，激励产品与模式创新。
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2 flex items-center">
+                                            <i class="fa-solid fa-mountain mr-2"></i>3. 长期战略（第6-10年）
+                                        </h4>
+                                        <p class="text-gray-700">
+                                            人才引领战略。夯实各职能体系，形成人才梯队。人力资源工作前移，进行前瞻性的战略人才布局与储备，特别是在人工智能、生态学等交叉学科领域。使人力资源管理与公司全球化、平台化战略深度融合，成为公司的核心竞争力之一。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SWOT分析 -->
+        <section class="py-16" id="swot-analysis">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 md:p-12 card-shadow">
+                        <h2 class="text-3xl font-bold text-brand mb-8 text-center flex items-center justify-center">
+                            <i class="fa-solid fa-chart-bar mr-3"></i>1.5 SWOT分析与选择
+                        </h2>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-table mr-3"></i>乡业绿禾灌溉科技有限公司SWOT分析
+                                </h3>
+                                
+                                <div class="overflow-x-auto mt-4">
+                                    <table class="min-w-full bg-white border border-gray-200">
+                                        <thead class="bg-brand/20">
+                                            <tr>
+                                                <th class="py-3 px-4 border text-left font-bold">优势 (Strengths)</th>
+                                                <th class="py-3 px-4 border text-left font-bold">劣势 (Weaknesses)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="py-3 px-4 border align-top">
+                                                    <ul class="list-disc pl-5 space-y-1">
+                                                        <li>核心技术（聚类+模糊控制）具备领先优势</li>
+                                                        <li>轻量化硬件适配复杂地形与无网环境</li>
+                                                        <li>团队具备农业+AI复合背景</li>
+                                                        <li>政策红利（补贴、税收优惠）明确</li>
+                                                    </ul>
+                                                </td>
+                                                <td class="py-3 px-4 border align-top">
+                                                    <ul class="list-disc pl-5 space-y-1">
+                                                        <li>创业初期品牌知名度低</li>
+                                                        <li>资金规模有限，市场拓展速度受限</li>
+                                                        <li>生产与供应链体系尚不完善</li>
+                                                        <li>缺乏大规模项目运营经验</li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <thead class="bg-brand/20">
+                                            <tr>
+                                                <th class="py-3 px-4 border text-left font-bold">机会 (Opportunities)</th>
+                                                <th class="py-3 px-4 border text-left font-bold">威胁 (Threats)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="py-3 px-4 border align-top">
+                                                    <ul class="list-disc pl-5 space-y-1">
+                                                        <li>国家大力推进智慧农业与高标准农田建设</li>
+                                                        <li>水资源短缺催生节水灌溉刚性需求</li>
+                                                        <li>进口替代趋势明显，国产设备受政策鼓励</li>
+                                                        <li>"一带一路"沿线国家农业现代化需求旺盛</li>
+                                                    </ul>
+                                                </td>
+                                                <td class="py-3 px-4 border align-top">
+                                                    <ul class="list-disc pl-5 space-y-1">
+                                                        <li>大型农企、互联网巨头可能跨界入局</li>
+                                                        <li>传统灌溉设备厂商低价竞争</li>
+                                                        <li>行业标准尚未统一，市场鱼龙混杂</li>
+                                                        <li>农户对新技术的接受度与支付能力存在差异</li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="mt-6 bg-white p-5 rounded-lg">
+                                    <h4 class="font-bold text-brand mb-2 flex items-center">
+                                        <i class="fa-solid fa-chess-knight mr-2"></i>战略选择
+                                    </h4>
+                                    <p class="text-gray-700">
+                                        充分利用技术闭环与政策东风，打造示范工程，树立"技术领先、解决问题"的品牌形象，快速占领进口替代的空白市场。同时，通过灵活的订阅服务模式化解价格敏感威胁，并与行业伙伴共建生态，应对标准不一的挑战。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 企业发展战略 -->
+        <section class="py-16 bg-white" id="development-strategy">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 md:p-12 card-shadow">
+                        <h2 class="text-3xl font-bold text-brand mb-8 text-center flex items-center justify-center">
+                            <i class="fa-solid fa-route mr-3"></i>1.6 企业发展战略
+                        </h2>
+                        
+                        <div class="space-y-8">
+                            <!-- 5.6.1 公司总体战略 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3">1.6.1 公司总体战略</h3>
+                                <p class="text-gray-700 mb-4">
+                                    从公司的创立之日起，将利用技术和资本优势打开市场，以大中型设备建立示范工程，产生示范效应，利于小型设备打开中小型企业客户市场。同时公司以市场为导向，以品质为竞争前提，以人才为中心，发展升级产品，大力实施专业化经营、资本运营、技术创新、成本控制四大战略，发挥公司专长，把公司建成一个适应市场经济发展、立足智能灌溉方面的具有强大经济实力和竞争能力的大型公司。
+                                </p>
+                                <p class="text-gray-700">
+                                    公司发展战略将分初期、中期、长期三步来走，在实现每一阶段战略目标的基础上，实现把公司做精、做强、做大，成为行业领导者的战略构想。公司实施"技术驱动、场景深耕、滚动发展"的总体战略。初期以自主研发的核心算法与系统集成能力为根本，进而以产生的数据、口碑和行业影响力为杠杆，撬动更广阔的市场。
+                                </p>
+                            </div>
+
+                            <!-- 5.6.2 初期战略 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3">1.6.2 初期战略（1-2年）</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">战略核心</h4>
+                                        <p class="text-gray-700 text-sm">生存下去，并证明价值。</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">产品与市场</h4>
+                                        <p class="text-gray-700 text-sm">聚焦1-2个核心场景，推出最小可行化产品，集中全部资源确保首个标杆项目成功，实现"从0到1"的突破。销售以项目直销为主。</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">研发</h4>
+                                        <p class="text-gray-700 text-sm">优先保障核心算法的稳定与在标杆场景中的精准度，初步构建作物模型数据库。</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">运营</h4>
+                                        <p class="text-gray-700 text-sm">在西安总部完成研发与中试，贴近用户，快速迭代。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 5.6.3 中期战略 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3">1.6.3 中期战略（3-5年）</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">战略核心</h4>
+                                        <p class="text-gray-700 text-sm">规模化复制成功，建立品牌。</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">产品与市场</h4>
+                                        <p class="text-gray-700 text-sm">形成针对设施农业、大田复杂地形、生态修复的标准化产品系列。市场从标杆点向重点农业省区、国家级园区辐射，建立区域分销和服务网络。</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">研发</h4>
+                                        <p class="text-gray-700 text-sm">基于更多场景数据，深化AI模型，开发预测性维护、产量预测等增值功能。平台化能力初显。</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">运营</h4>
+                                        <p class="text-gray-700 text-sm">建立华东、西北、华北等多个区域运营中心，提升本地化服务与响应速度。</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 5.6.4 长期战略 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3">1.6.4 长期战略（6-10年）</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">战略核心</h4>
+                                        <p class="text-gray-700 text-sm">定义标准，构建生态。</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">产品与市场</h4>
+                                        <p class="text-gray-700 text-sm">市场从国内向"一带一路"沿线等海外市场拓展。</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">研发</h4>
+                                        <p class="text-gray-700 text-sm">前沿技术探索（如与卫星遥感、无人机巡测深度融合），成为农业数字化的核心大脑。</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">运营</h4>
+                                        <p class="text-gray-700 text-sm">完成全球化服务网络布局，公司成为以数据和算法驱动的智慧农业领域领军企业。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 第6章：营销策略 ========== -->
+        <section class="py-16" id="marketing-strategy">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 md:p-12 card-shadow">
+                        <h2 class="text-3xl font-bold text-brand mb-8 text-center flex items-center justify-center">
+                            <i class="fa-solid fa-chart-line mr-3"></i>2. 营销策略
+                        </h2>
+                        
+                        <!-- 6.1 产品策略 -->
+                        <div class="space-y-8">
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-box mr-3"></i>2.1 产品策略
+                                </h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.1.1 产品策略</h4>
+                                        <p class="text-gray-700 mb-4">
+                                            本公司的产品策略遵循STP理论，在完成市场细分与目标市场选择后，将产品明确定位于"面向中小规模农田的高性价比、轻量化智能灌溉决策与执行系统"。我们秉持"精准节水、省时省工、无网可用"的核心价值主张，致力于通过技术创新，将复杂的智能灌溉能力封装为简单、可靠、农民"用得起、用得好"的产品。
+                                        </p>
+                                        <p class="text-gray-700 mb-4">
+                                            根据我们对目标市场的选择和定位分析，我们采用高质同价定位，提供性能指标高于同等产品的水平，但价格相同于同等产品，同时提供响应速度更快的产品服务支持。
+                                        </p>
+                                        <div class="bg-gray-50 p-4 rounded-lg mt-4">
+                                            <h5 class="font-bold text-brand mb-2">产品与服务三个层次：</h5>
+                                            <ul class="space-y-2 text-gray-700">
+                                                <li class="timeline-item"><span class="font-semibold">核心利益：</span>为客户提供科学、精准、自动化的灌溉决策与执行能力，最终实现水资源节约、劳动力解放与种植效益提升。</li>
+                                                <li class="timeline-item"><span class="font-semibold">有形产品：</span>"多元数据下的人工智能灌溉系统"硬件套件（感知层传感器、边缘计算决策终端、执行层控制器）及配套软件平台（手机APP/电脑Web端）。</li>
+                                                <li class="timeline-item"><span class="font-semibold">附加服务：</span>包含系统安装调试指导、农艺使用培训、7x24小时远程技术支援、定期灌溉分析报告以及数据服务持续升级。</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 6.2 价格策略 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-tag mr-3"></i>2.2 价格策略
+                                </h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.2.1 定价目标</h4>
+                                        <p class="text-gray-700">
+                                            根据营销目标，我们的价格制定在前2年不变，采用高质同价的定价策略，一方面保证流动资金的正常运转，一方面我们的业务行业处于初始发展的阶段。在成功进入市场以后，我们定价将进一步以扩大有利于现金流增长的业务为目标，以支撑我们的研发工作，保持持续的技术优势。
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.2.2 定价方法</h4>
+                                        <p class="text-gray-700">
+                                            考虑到我们的产品所在的市场处于初始发展阶段，很难预测目标利润，所以我们不采取目标利润定价法，而是采用竞争对手比照定价法。即以市场上我们主要竞争对手的平均价格为我们定价的基准，同时以我们的产品成本为定价的最低限，而以客户对产品价值的感知为定价的最高限，并结合我们的定价目标，制定出最终的价格。
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.2.4 客户对价值的感知分析</h4>
+                                        <p class="text-gray-700 mb-3">
+                                            客户对智能灌溉系统的价值感知是分层的、渐进式的：
+                                        </p>
+                                        <ul class="space-y-2 text-gray-700">
+                                            <li class="timeline-item"><span class="font-semibold">初级感知（成本节省）：</span>最易被感知的是节省水费和节省人工巡田、开关阀门的时间与劳力。这是购买决策的首要驱动因素。</li>
+                                            <li class="timeline-item"><span class="font-semibold">中级感知（风险规避与便利性）：</span>避免干旱或浇水不及时导致的减产风险，以及通过手机远程控制的便利性。</li>
+                                            <li class="timeline-item"><span class="font-semibold">高级感知（增产提质与科学种植）：</span>通过精准灌溉提升作物品质和产量，以及获得数据指导种植决策的"科学感"。这一层感知需要在使用中逐步形成，是建立客户忠诚度的关键。</li>
+                                        </ul>
+                                        <p class="text-gray-700 mt-3">
+                                            因此，定价沟通中需强力传递初级和中级价值，并通过服务让客户体验到高级价值。
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.2.5 价格定制</h4>
+                                        <p class="text-gray-700">
+                                            我们对标两类主要竞争对手，以确定市场价格锚点：
+                                        </p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">A类对手（高端进口品牌）</h5>
+                                                <p class="text-gray-700 text-sm">其全功能智能灌溉系统亩均投资约2,000-4,000元。这设定了市场的价值认知高点。</p>
+                                            </div>
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">B类对手（国内低端控制器）</h5>
+                                                <p class="text-gray-700 text-sm">其简易自动灌溉设备亩均投资约200-800元。这构成了市场对"自动化"的基础价格预期。</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-700 mt-4">
+                                            我们的目标是在二者之间开辟一个"高价值中价位"区间。因此，总体定价基准锚定在300-2,000元/亩的空白地带，并针对不同区域所使用的产品进行差异化定位。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 6.3 渠道市场 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-network-wired mr-3"></i>2.3 渠道市场
+                                </h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.3.1 渠道设计</h4>
+                                        
+                                        <div class="space-y-4">
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（1）分清重点，根据土地区域规模的不同区别对待</h5>
+                                                <p class="text-gray-700">
+                                                    为了快速的创造品牌知名度，占领目标市场，在前期我们将打破公司以直销为主的传统的营销模式，采用直销和分销相结合的销售模式。对于我们的目标市场即西安、咸阳等关中平原区域内的小型农业种植企业，我们采用重点突破的直销经营模式，对于分布在这些区域的中型目标企业，我们不采用直销的经营模式，而是建立起我们的销售宣传渠道，通过经销方式来实现我们产品的推销和宣传。
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（2）逐渐淡化分销模式</h5>
+                                                <p class="text-gray-700">
+                                                    由于我们前期在主要市场内所做的宣传较为分散，我们采取了分销的经营模式。这种分销模式势必会导致我们的运营成本较高，宣传费用将占到公司开销的一半。竞争的逐渐加剧，市场壁垒的逐渐减弱，管理费用的增加势必会导致我们的竞争优势减弱，这会使我们丧失市场主动权。
+                                                </p>
+                                                <p class="text-gray-700 mt-2">
+                                                    鉴于以上情况，我们将在公司成立并发展三年之后，在陕西省的重点区域逐步建立农业科技示范园。农业科技示范园的建立，可以促进公司和目标顾客群之间进行信息交流和业务的咨询，使信息能够得到及时反馈，为顾客提供优质、及时的服务。在服务上进一步扩大品牌宣传。
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.3.2 渠道选择及功能完善</h4>
+                                        
+                                        <div class="space-y-4">
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">渠道成员选择标准：</h5>
+                                                <ul class="space-y-2 text-gray-700">
+                                                    <li class="timeline-item">认同公司理念，具备一定的农业领域经验或客户资源。</li>
+                                                    <li class="timeline-item">拥有稳定的本地化团队，能提供基础的安装或指导服务。</li>
+                                                    <li class="timeline-item">具备良好的商业信誉和资金实力。</li>
+                                                </ul>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">渠道功能完善与支持体系：</h5>
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                                                    <div class="bg-white p-3 rounded">
+                                                        <h6 class="font-semibold text-brand mb-1">1. 培训体系</h6>
+                                                        <p class="text-gray-700 text-sm">建立"星火计划"渠道培训学院，为合作伙伴提供产品技术、销售技巧、安装服务及农艺知识的系统培训与认证。</p>
+                                                    </div>
+                                                    <div class="bg-white p-3 rounded">
+                                                        <h6 class="font-semibold text-brand mb-1">2. 激励体系</h6>
+                                                        <p class="text-gray-700 text-sm">设计具有竞争力的销售佣金政策、市场开发奖励及长期服务收益分成机制，激发渠道活力。</p>
+                                                    </div>
+                                                    <div class="bg-white p-3 rounded">
+                                                        <h6 class="font-semibold text-brand mb-1">3. 支持体系</h6>
+                                                        <p class="text-gray-700 text-sm">为渠道伙伴提供营销物料、线上引流线索、技术专家远程支援、快速物流响应及客户纠纷协处理等全方位支持。</p>
+                                                    </div>
+                                                    <div class="bg-white p-3 rounded">
+                                                        <h6 class="font-semibold text-brand mb-1">4. 管理体系</h6>
+                                                        <p class="text-gray-700 text-sm">通过合作伙伴门户（Portal）实现订单管理、库存查询、数据查看和佣金结算的数字化、透明化，提升渠道管理效率。</p>
+                                                    </div>
+                                                </div>
+                                                <p class="text-gray-700 mt-4 text-sm">
+                                                    通过构建这一立体化、赋能型的渠道网络，公司能够高效触达广泛而分散的农业客户，实现产品的快速推广与服务的有效落地。
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 6.4 营销策略 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-bullhorn mr-3"></i>2.4 营销策略
+                                </h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.4.1 人员推销</h4>
+                                        <p class="text-gray-700 mb-4">
+                                            通过实地调研，我们发现农业生产主体在考虑引入智能灌溉系统时，决策信息主要来源于可靠的案例考察与专业人员面对面的方案讲解。加上我们的产品品牌处于市场开拓期，客户对于我们的产品处于一种需要深入了解的状态，因此人员推销是我们公司最重要的促销方式。
+                                        </p>
+                                        <p class="text-gray-700">
+                                            人员推销为主体：前三年由于公司资金的限制，我们将集中力量对选定的标杆客户进行深度攻关，采用销售工程师直接上门提供定制化解决方案的方式进行推销。此阶段仅在行业媒体和自有数字渠道上进行基础品牌投入，力求集中资源打开市场突破口。三年后公司有了一定的发展基础和成功案例，将逐步建立更广泛的销售网络，并发展渠道合作伙伴，以控制销售主动权并扩大市场覆盖面。
+                                        </p>
+                                        
+                                        <div class="overflow-x-auto mt-4">
+                                            <table class="min-w-full bg-white border border-gray-200">
+                                                <thead class="bg-brand/20">
+                                                    <tr>
+                                                        <th class="py-3 px-4 border text-left font-bold">人员</th>
+                                                        <th class="py-3 px-4 border text-left font-bold">数量</th>
+                                                        <th class="py-3 px-4 border text-left font-bold">职责</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="py-3 px-4 border font-semibold">销售总监</td>
+                                                        <td class="py-3 px-4 border">1</td>
+                                                        <td class="py-3 px-4 border">全面负责销售部门的工作安排、负责制定本公司的营销策略与渠道管理。</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="py-3 px-4 border font-semibold">区域经理</td>
+                                                        <td class="py-3 px-4 border">3</td>
+                                                        <td class="py-3 px-4 border">负责西安、商洛等重点市场的开拓与管理，是区域推销与合作伙伴的负责人。</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="py-3 px-4 border font-semibold">销售工程师</td>
+                                                        <td class="py-3 px-4 border">10</td>
+                                                        <td class="py-3 px-4 border">负责公司的营销具体执行工作：上门推销、技术方案演示、客户调研及售后跟进，需具备农业与工科复合背景。</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.4.2 网络营销</h4>
+                                        <p class="text-gray-700 mb-4">
+                                            网络促销是通过数字方式将客户和我们连接起来，实现更广泛、更精准传播的促销方式。
+                                        </p>
+                                        
+                                        <div class="space-y-3">
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（1）建立专业的公司官网与内容平台</h5>
+                                                <p class="text-gray-700">
+                                                    公司将建立自己的公司官网及"智慧灌溉"技术博客，主要用于发布产品信息、技术白皮书、解决方案及典型客户案例。在公司的发展阶段，我们会强化官网的交互功能，提供在线咨询与方案预约；同时建立客户数据库，对潜在的意向客户信息加以收集、整理与分析。
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（2）电子邮件定向推送</h5>
+                                                <p class="text-gray-700">
+                                                    对于农业合作社、农业龙头企业、相关政府农业部门及科研机构，进行定期的电子邮件沟通，推送行业资讯、技术文章或最新成功案例，提供专业的"售前知识服务"，持续培育潜在客户。
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（3）运营行业垂直社群</h5>
+                                                <p class="text-gray-700">
+                                                    在专业农业技术论坛、知乎、行业微信群等平台，发起或参与关于智慧农业、节水灌溉、应对极端气候等话题的讨论。通过输出专业见解，发掘行业痛点与需求，塑造公司技术专家形象，并与潜在客户及行业伙伴建立连接。
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（4）新媒体矩阵运营</h5>
+                                                <p class="text-gray-700">
+                                                    在微信公众平台、视频号、抖音等新媒体平台建立官方账号。微信公众号用于发布深度文章与案例；短视频平台则主要用于展示系统在复杂地形的实际运行延时摄影、客户访谈与效果对比，以生动直观的形式快速传播产品价值，提升品牌知名度。
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.4.3 广告宣传</h4>
+                                        <p class="text-gray-700 mb-4">
+                                            公司的广告宣传将采取分阶段、有侧重的策略。前期主要依托网络营销和人员推销，中后期将加大品牌广告的投入。我们将根据营销战略步骤确定每期广告宣传的侧重点。
+                                        </p>
+                                        
+                                        <div class="space-y-3">
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（1）户外广告</h5>
+                                                <p class="text-gray-700">
+                                                    选择在国家农业高新技术产业示范区、大型农业产业园区的交通要道附近树立我们公司的品牌广告，突出我们"针对复杂地形，知干知湿自适应"的核心技术特点，强调为国家节水增粮战略提供的科技支持。
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（2）行业媒体广告</h5>
+                                                <p class="text-gray-700">
+                                                    在智慧农业与灌溉领域的权威期刊、杂志及网站上做广告，例如在《中国农业信息化》、《节水灌溉》、《农业工程学报》等，重点在于突出公司技术和产品的差异化优势，传达"智能闭环决策系统"处于国内领先水平，并已获得市场验证的信息。
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（3）视频与线上展会</h5>
+                                                <p class="text-gray-700">
+                                                    制作高质量的产品介绍与案例实践视频，在公司官网、新媒体平台及行业线上展会上播放。利用视频可以清晰展示从传感器检测到AI决策再到执行器动作的完整闭环流程，让用户更直接、更清楚地了解我们系统的智能化与可靠性。
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.4.4 公关活动</h4>
+                                        
+                                        <div class="space-y-3">
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（1）新闻发布会/技术研讨会</h5>
+                                                <p class="text-gray-700">
+                                                    在取得重大技术突破、完成标志性示范项目（如大型梯田智能化改造、荒漠节水恢复项目）或获得重要奖项时，适时举办新闻发布会或技术研讨会。邀请行业媒体、专家学者、潜在客户及合作伙伴参加，集中发布成果，提升行业影响力，让智慧农业领域更多的了解我们公司的技术和产品。
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（2）行业交流与合作会</h5>
+                                                <p class="text-gray-700">
+                                                    定期与农业科研院所（如中国农科院、各省农科院）、高校农业工程系以及大型农垦集团的技术部门开展交流会。分享技术经验，了解前沿需求，听取专家意见，积极改进我们的技术和产品，并寻求研发与合作机会，以获得更广阔的市场与技术支持。
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">2.4.5 国际性学术会议促销</h4>
+                                        <p class="text-gray-700">
+                                            随着全球对智慧农业与水资源高效利用的关注度日益提高，国际学术交流频繁。为了将公司的产品与技术理念推向更广阔的舞台，并接触前沿技术，公司将积极争取参与联合国粮农组织（FAO）、国际灌溉排水委员会（ICID）等相关国际机构组织的学术会议。公司将派出技术人员出席会议或发表演讲，向全球专家介绍我们在复杂环境下的智能灌溉解决方案，为未来开拓国际市场、开展技术合作奠定基础。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 第7章：公司运营 ========== -->
+        <section class="py-16 bg-white" id="operation">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-2xl p-8 md:p-12 card-shadow">
+                        <h2 class="text-3xl font-bold text-brand mb-8 text-center flex items-center justify-center">
+                            <i class="fa-solid fa-cogs mr-3"></i>7. 公司运营
+                        </h2>
+                        
+                        <!-- 7.1 生产配置 -->
+                        <div class="space-y-8">
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-industry mr-3"></i>3.1 生产配置
+                                </h3>
+                                
+                                <div class="bg-white p-5 rounded-lg">
+                                    <p class="text-gray-700 mb-4">
+                                        为了达到公司预定的生产目标，根据工艺流程要求与生产设备配备情况，公司设置了相关岗位与人员。本公司实行连续生产制度，所有员工实行8小时正常工作制，三班倒换工作。
+                                    </p>
+                                    
+                                    <div class="overflow-x-auto mt-4">
+                                        <table class="min-w-full bg-white border border-gray-200">
+                                            <thead class="bg-brand/20">
+                                                <tr>
+                                                    <th class="py-3 px-4 border text-left font-bold">岗位</th>
+                                                    <th class="py-3 px-4 border text-left font-bold">人数</th>
+                                                    <th class="py-3 px-4 border text-left font-bold">工作内容</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="py-3 px-4 border font-semibold">生产主管</td>
+                                                    <td class="py-3 px-4 border">2</td>
+                                                    <td class="py-3 px-4 border">负责生产计划制定、现场管理、质量控制</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-3 px-4 border font-semibold">设备操作员</td>
+                                                    <td class="py-3 px-4 border">12</td>
+                                                    <td class="py-3 px-4 border">负责灌溉设备的生产、组装与调试</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-3 px-4 border font-semibold">质量控制员</td>
+                                                    <td class="py-3 px-4 border">4</td>
+                                                    <td class="py-3 px-4 border">负责原材料检验、过程质量控制、成品检验</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-3 px-4 border font-semibold">仓储管理员</td>
+                                                    <td class="py-3 px-4 border">3</td>
+                                                    <td class="py-3 px-4 border">负责原材料入库、成品出库、库存管理</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-3 px-4 border font-semibold">设备维护员</td>
+                                                    <td class="py-3 px-4 border">3</td>
+                                                    <td class="py-3 px-4 border">负责生产设备日常维护、定期检修</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-3 px-4 border font-semibold">物流配送员</td>
+                                                    <td class="py-3 px-4 border">6</td>
+                                                    <td class="py-3 px-4 border">负责产品包装、发货、运输协调</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7.2 组织形式 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-sitemap mr-3"></i>3.2 组织形式
+                                </h3>
+                                
+                                <div class="bg-white p-5 rounded-lg">
+                                    <p class="text-gray-700 mb-4">
+                                        公司发展初期采用较简单的直线制组织结构，结构简单，领导关系明确，责任清楚，决定迅速，指挥统一灵活。公司重大的决策由董事会做出。由部分股东、职工代表以及上级管理机关的领导组成监事会，监督企业的运营。成立公司顾问委员会，聘任各领域专家为公司提供参考意见。
+                                    </p>
+                                    <p class="text-gray-700 mb-4">
+                                        总经理负责公司的日常事务，主持公司的生产运营管理工作。各部门经理对所属部门的一切问题负责。公司初期设三位副总经理，他们之间独立工作，一定时期内召开经理会议，向总经理汇报近期工作，进行各部门之间的交流，总经理具体督办，做到及时反映，及时处理。
+                                    </p>
+                                    <p class="text-gray-700">
+                                        这种组织形式对公司的管理层的要求较高，要求他们要懂得多种专业知识，能亲自处理财务、营销和生产等方面的复杂问题，同时它限制了各部门间的横向沟通，因此不能适应生产技术的发展和经营管理工作复杂性的要求，所以公司组织形式将随着公司的发展而不断进行调整。
+                                    </p>
+                                    
+                                    <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+                                        <h5 class="font-bold text-brand mb-2">组织结构发展</h5>
+                                        <p class="text-gray-700">
+                                            公司发展到一定规模后，业务进一步扩大，再加上产品技术含量的不断提高和公司全面质量管理的启动，繁忙的日常工作束缚了高层管理人员的创新能力，在激烈的市场竞争中将会使企业处于不利地位。为了适应市场竞争以及新的业务发展要求，明确划分公司高、中、基层人员工作性质的界限，将公司高层从繁重的日常事务中解脱出来，转向企业战略目标的制订与规划上，实现公司业务的专门化和高效化。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7.3 员工培训与招聘 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-user-graduate mr-3"></i>3.3 员工培训与招聘
+                                </h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <p class="text-gray-700 mb-4">
+                                            从公司整体战略规划出发，根据公司的人力资源规划，创业初期公司将大量吸引优秀人才的加入，员工招聘主要采用内部招聘和外部招聘相结合的方法：
+                                        </p>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（1）内部招聘</h5>
+                                                <p class="text-gray-700 text-sm">
+                                                    这种做法通常是企业在内部公开空缺职位，吸引员工来应聘。从成本和公司的长期发展考虑出发，同时考虑到这种方法能够使员工有一种公平合理、公开竞争的平等感觉，它会使员工更加努力奋斗，为自己的发展增加积极的因素，从而可以从内部发现、挖掘人才。这部分人员主要从各部门一线人员中提拔。
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（2）外部招聘</h5>
+                                                <p class="text-gray-700 text-sm">
+                                                    仅仅靠内部招聘是不能满足公司在创业初期对人才的需求的，还需要从外部吸收新鲜血液，以弥补公司内部人员供给的不足，为公司带来新的管理思想和技术改革。具体招聘需求由各部门经理根据部门的发展需要，根据公司人力资源规划做出计划，由人力资源部在招聘中根据岗位需求选拔出合适的人选。
+                                                </p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="overflow-x-auto mt-4">
+                                            <table class="min-w-full bg-white border border-gray-200">
+                                                <thead class="bg-brand/20">
+                                                    <tr>
+                                                        <th class="py-3 px-4 border text-left font-bold">人员类型</th>
+                                                        <th class="py-3 px-4 border text-left font-bold">招聘与培养方式</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="py-3 px-4 border font-semibold">管理人员</td>
+                                                        <td class="py-3 px-4 border">创业初期由原项目团队人员担任，随着公司部门的细化将从外部招聘具有一定管理经验的人担任，要求其认同本公司企业文化</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="py-3 px-4 border font-semibold">技术人员</td>
+                                                        <td class="py-3 px-4 border">创业初期，技术人员由原项目组技术人员担任，后期则由内部培养和外部招聘获取</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="py-3 px-4 border font-semibold">营销人员</td>
+                                                        <td class="py-3 px-4 border">公开招聘有销售经验的人员</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="py-3 px-4 border font-semibold">生产人员</td>
+                                                        <td class="py-3 px-4 border">从相似生产经验的熟练工中获取</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white p-5 rounded-lg">
+                                        <h4 class="font-bold text-brand mb-2">培训体系</h4>
+                                        <p class="text-gray-700 mb-4">
+                                            为了帮助员工充分发挥和利用其人力资源潜能，增强员工对公司的组织归属感和责任感，公司将根据人力资源战略建立一整套完善的培训系统。
+                                        </p>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（1）入职培训</h5>
+                                                <p class="text-gray-700 text-sm">
+                                                    培训对象为新进员工，培训目的是让他们学习团队工作技能，了解公司战略，接受公司文化、企业愿景。
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 p-4 rounded-lg">
+                                                <h5 class="font-bold text-brand mb-2">（2）专业培训</h5>
+                                                <p class="text-gray-700 text-sm">
+                                                    针对不同部门、不同岗位而设置的。针对管理人员主要进行的是管理理念、方法、技巧等培训，针对生产人员的是规章制度、生产技能、设备维护等培训，而根据公司的实际状况，大部分培训还是针对市场人员进行的，主要是对产品性能的学习、营销技巧的培训、人际沟通和独立解决问题的能力。
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7.4 薪酬管理 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-money-bill-wave mr-3"></i>3.4 薪酬管理
+                                </h3>
+                                
+                                <div class="bg-white p-5 rounded-lg">
+                                    <p class="text-gray-700 mb-4">
+                                        公司依据公司战略和经济状况，结合公司所在地区、行业的薪酬状况以及国家的有关法律法规，确定薪酬制度，提供具有竞争力的薪酬福利待遇，吸引和保留优秀人才。
+                                    </p>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h5 class="font-bold text-brand mb-2">（1）基本工资</h5>
+                                            <p class="text-gray-700 text-sm">
+                                                按照岗位的重要程度确定工资等级的岗位等级工资制。
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h5 class="font-bold text-brand mb-2">（2）奖励性工资</h5>
+                                            <p class="text-gray-700 text-sm">
+                                                依据员工的绩效而进行的基本工资的调整及增发的工资。在执行过程中坚持个人奖励和集体奖励两种形式相互补充。
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h5 class="font-bold text-brand mb-2">（3）津贴补贴</h5>
+                                            <p class="text-gray-700 text-sm">
+                                                除了国家法定的津贴之外，还根据一些特殊岗位的需求设立通讯津贴、饮食性补贴、住房补贴等。
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h5 class="font-bold text-brand mb-2">（4）员工福利</h5>
+                                            <p class="text-gray-700 text-sm">
+                                                管理人员实行管理人员持股计划，根据个人绩效和公司绩效分配红利；给予技术人员良好的经费支持和良好的研究环境；依据国家的政策，为公司员工办理"五险一金"，提供晋升机会、培训机会等福利政策。
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 7.5 绩效管理 -->
+                            <div class="bg-brand/5 p-6 rounded-xl">
+                                <h3 class="text-xl font-bold text-brand mb-3 flex items-center">
+                                    <i class="fa-solid fa-chart-line mr-3"></i>3.5 绩效管理
+                                </h3>
+                                
+                                <div class="bg-white p-5 rounded-lg">
+                                    <p class="text-gray-700 mb-4">
+                                        绩效考核不能仅仅为了考核而考核，要注意考核过程中的每一个环节，否则考核就起不到激励员工、挖掘员工潜力的作用。我们将从公司实际情况出发，遵照"短期考核与长期考核相结合、注重考核过程中的沟通"的绩效管理理念，坚持实行绩效考核。
+                                    </p>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h5 class="font-bold text-brand mb-2">（1）日考核</h5>
+                                            <p class="text-gray-700 text-sm">
+                                                针对普通员工，按照"日清日毕"的原则将当天工作逐项清理作为月度考核的依据。主要考核的是员工的工作态度和日常任务完成情况。
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h5 class="font-bold text-brand mb-2">（2）月度考核</h5>
+                                            <p class="text-gray-700 text-sm">
+                                                依据日考核并结合360°考核结果进行考核，针对的是普通员工绩效的考核。
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <h5 class="font-bold text-brand mb-2">（3）年度考核</h5>
+                                            <p class="text-gray-700 text-sm">
+                                                针对公司全体员工，年度考核同时考核工作业绩、工作态度和工作能力，以对员工作一个全面的评价，为员工的业绩改善和自身发展建立依据。结果不仅仅作为绩效工资发放的依据，还应用在人力资源管理的各个方面。
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 新增内容结束 ========== -->
+
+        <!-- 公司愿景 -->
+        <section class="py-16 bg-gradient-brand text-white" id="company-vision-section">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto text-center">
+                    <h2 class="text-3xl font-bold mb-6">公司愿景</h2>
+                    <p class="text-xl leading-relaxed mb-8 opacity-90">
+                        成为中国智慧农业灌溉领域的引领者，通过技术创新助力农业现代化，
+                        让每一滴水都发挥最大价值，让每一亩地都实现最佳产出。
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="index.html" class="bg-white text-brand hover:bg-gray-100 font-bold px-8 py-3 rounded-lg transition">
+                            体验智能灌溉系统
+                        </a>
+                        <button onclick="window.print()" class="bg-transparent border-2 border-white hover:bg-white/10 font-bold px-8 py-3 rounded-lg transition">
+                            <i class="fa-solid fa-print mr-2"></i>打印本页
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ae10c927211a4d40a7ce83dc0d6d62b0.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260203224317F56453BF2EEA2D01E594&rrcfp=dafada99&x-expires=2086353797&x-signature=eTC2QeGqQdxxHpf5UMQFHG7AwFk%3D" 
+                             alt="乡业绿禾灌溉科技有限公司" 
+                             class="h-8 w-auto rounded mr-2">
+                        乡业绿禾灌溉科技有限公司
+                    </h3>
+                    <p class="text-gray-400 mb-4">
+                        基于大数据和人工智能的智能灌溉系统，
+                        精准灌溉，节水增效，助力农业现代化发展。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fa-solid fa-envelope"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fa-solid fa-phone"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fa-solid fa-question-circle"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">快速链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition">系统主页</a></li>
+                        <li><a href="#dashboard" class="text-gray-400 hover:text-white transition">仪表盘</a></li>
+                        <li><a href="#crops" class="text-gray-400 hover:text-white transition">作物灌溉方案</a></li>
+                        <li><a href="company.html#technology" class="text-gray-400 hover:text-white transition font-bold">核心技术</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">联系我们</h3>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400"><i class="fa-solid fa-phone mr-2"></i>服务热线: 18291248918</li>
+                        <li class="text-gray-400"><i class="fa-solid fa-envelope mr-2"></i>技术支持: 3362024376@qq.com</li>
+                        <li class="text-gray-400"><i class="fa-solid fa-location-dot mr-2"></i>公司地址: 陕西省西安市</li>
+                        <li class="text-gray-400"><i class="fa-solid fa-calendar mr-2"></i>更新日期: 2026-02-10</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>© 2026 乡业绿禾灌溉科技有限公司 版权所有 | 科技赋能，节水兴农</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-brand text-white p-3 rounded-full shadow-lg opacity-0 transition-opacity duration-300 hover:bg-brand/90">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // 返回顶部功能
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.remove('opacity-0');
+                backToTop.classList.add('opacity-100');
+            } else {
+                backToTop.classList.remove('opacity-100');
+                backToTop.classList.add('opacity-0');
+            }
+        });
+        
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // 侧边栏导航功能
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 侧边栏链接点击效果
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // 移除所有active类
+                document.querySelectorAll('.sidebar-link').forEach(item => {
+                    item.classList.remove('active');
+                });
+                // 给当前点击的链接添加active类
+                this.classList.add('active');
+            });
+        });
+
+        // 监听滚动，高亮当前章节
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const scrollY = window.pageYOffset;
+            
+            sections.forEach(section => {
+                const sectionHeight = section.offsetHeight;
+                const sectionTop = section.offsetTop - 100;
+                const sectionId = section.getAttribute('id');
+                const link = document.querySelector(`.sidebar-link[href="#${sectionId}"]`);
+                
+                if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight && link) {
+                    document.querySelectorAll('.sidebar-link').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

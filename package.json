@@ -1,0 +1,19 @@
+{
+  "name": "realtime-react-demo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 5173"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "chart.js": "^4.4.0",
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

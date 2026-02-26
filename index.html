@@ -1,0 +1,3413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万物灌溉生 - 多模态数据下的人工智能灌溉系统</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#16A34A', // 农业绿
+                        secondary: '#0EA5E9', // 科技蓝
+                        warning: '#F59E0B', // 警示黄
+                        danger: '#EF4444', // 危险红
+                        dark: '#1E293B',
+                        light: '#F8FAFC',
+                        brand: '#0F766E' // 乡业绿禾品牌色
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- 前端默认后端配置：本地运行 http://localhost:3000，API 基址为 /api -->
+    <script>
+        (function(){
+            // 默认本地后端（保留）
+            window.DEFAULT_BACKEND_ORIGIN = 'http://localhost:3000';
+            window.DEFAULT_API_BASE = window.DEFAULT_BACKEND_ORIGIN.replace(/\/$/, '') + '/api';
+            // 强制使用 ngrok 地址作为 API/WS 基址（可按需改回或由 localStorage 覆盖）
+            window.API_BASE = 'https://uninterpretable-latisha-unmiserly.ngrok-free.dev/api';
+            window.WS_BASE  = 'wss://uninterpretable-latisha-unmiserly.ngrok-free.dev';
+
+            // 从 localStorage 中读取项目统一使用的 token（仅使用 'jwt' 键）
+            window.getAuthToken = function(){
+                return localStorage.getItem('jwt') || '';
+            };
+
+            // 如果 localStorage 中没有后端地址，写入默认值，便于后续脚本读取
+            try {
+                if (!localStorage.getItem('device_backend_url')) {
+                    localStorage.setItem('device_backend_url', window.DEFAULT_BACKEND_ORIGIN);
+                }
+            } catch (e) {
+                // ignore (例如无 localStorage 权限)
+            }
+        })();
+    </script>
+
+
+    </script>
+
+    <!-- 自定义样式 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            .status-online {
+                @apply bg-primary/10 text-primary border border-primary/20;
+            }
+            .status-warning {
+                @apply bg-warning/10 text-warning border border-warning/20;
+            }
+            .status-offline {
+                @apply bg-danger/10 text-danger border border-danger/20;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light font-sans text-dark min-h-screen flex flex-col">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white card-shadow sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <nav class="flex justify-between items-center py-4">
+                <!-- Logo区域 - 集成公司标志 -->
+                <div class="flex items-center space-x-3">
+                    <!-- 公司Logo图片 -->
+                    <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ae10c927211a4d40a7ce83dc0d6d62b0.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260203224317F56453BF2EEA2D01E594&rrcfp=dafada99&x-expires=2086353797&x-signature=eTC2QeGqQdxxHpf5UMQFHG7AwFk%3D" 
+                         alt="乡业绿禾灌溉科技有限公司" 
+                         class="h-12 w-auto rounded">
+                    <!-- 品牌名称 -->
+                    <div>
+                        <h1 class="text-xl font-bold text-brand">乡业绿禾</h1>
+                        <p class="text-xs text-gray-500">AI智能灌溉系统</p>
+                    </div>
+                </div>
+                
+                <!-- 导航菜单 -->
+                <ul class="hidden md:flex space-x-8">
+                    <li><a href="#dashboard" class="text-brand font-medium">仪表盘</a></li>
+                    <li><a href="#crops" class="hover:text-brand transition">作物灌溉方案</a></li>
+                    <li><a href="#analysis" class="hover:text-brand transition">数据分析</a></li>
+                    <li><a href="#hardware" class="hover:text-brand transition">硬件监控</a></li>
+                    <li><a href="#suggestion" class="hover:text-brand transition">智能建议</a></li>
+                </ul>
+                
+                <!-- 用户信息区域 -->
+ <div class="flex items-center space-x-4">
+    <!-- 位置选择器 -->
+    <div class="hidden md:block">
+        <button id="locationBtn" class="flex items-center space-x-1 text-gray-600 hover:text-brand transition px-3 py-1.5 rounded-lg hover:bg-gray-50">
+            <i class="fa-solid fa-location-dot text-sm"></i>
+            <span id="currentLocation" class="text-sm">西安市</span>
+            <i class="fa-solid fa-chevron-down text-xs"></i>
+        </button>
+    </div>
+    
+                <!-- 用户功能区 -->
+    <div id="guestState" class="flex items-center space-x-2">
+        <button id="loginBtn" class="hidden md:block text-sm text-gray-600 hover:text-brand px-3 py-1.5 rounded-lg hover:bg-gray-50 transition">
+            登录
+        </button>
+        <button id="registerBtn" class="text-sm bg-brand hover:bg-brand/90 text-white px-3 py-1.5 rounded-lg transition">
+            注册
+        </button>
+    </div>
+    
+    <div id="userState" class="hidden flex items-center space-x-3">
+        <div class="text-right hidden md:block">
+            <p id="userName" class="text-sm font-medium">管理员</p>
+        </div>
+        <div class="relative">
+            <button id="userMenuBtn" class="w-10 h-10 rounded-full overflow-hidden border-2 border-brand/20 hover:border-brand/40 transition bg-brand/10">
+                <img id="userAvatar" src="" alt="用户头像" class="w-full h-full object-cover">
+            </button>
+        </div>
+    </div>
+    
+    <!-- 移动端菜单按钮 -->
+    <button id="mobileMenuBtn" class="md:hidden text-xl">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+ </div>
+            <!-- 移动端导航菜单 -->
+            <div id="mobileMenu" class="md:hidden hidden pb-4 border-t">
+                <ul class="space-y-3">
+                    <li><a href="#dashboard" class="block py-2 text-brand font-medium">仪表盘</a></li>
+                    <li><a href="#crops" class="block py-2">作物灌溉方案</a></li>
+                    <li><a href="#analysis" class="block py-2">数据分析</a></li>
+                    <li><a href="#hardware" class="block py-2">硬件监控</a></li>
+                    <li><a href="#suggestion" class="block py-2">智能建议</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-1 container mx-auto px-4 py-8">
+        <!-- 系统概览仪表盘 -->
+        <section id="dashboard" class="mb-12">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2">系统仪表盘</h2>
+                    <p class="text-gray-500">乡业绿禾智能灌溉系统 - 实时监控灌溉系统运行状态与环境数据</p>
+                    <p id="dashboardTime" class="text-gray-500 text-sm">最后刷新: --</p>
+                </div>
+            </div>
+            <!-- 通知栏 -->
+            <div id="alertBar" class="mb-6 min-h-[2rem] border border-green-300 rounded bg-green-50 flex items-center justify-center text-green-600">
+        消息框
+    </div>
+                <div class="mt-4 md:mt-0 flex space-x-4">
+                    <button id="refreshBtn" class="bg-brand hover:bg-brand/90 text-white px-4 py-2 rounded-lg flex items-center transition">
+                        <i class="fa-solid fa-refresh mr-2"></i>刷新数据
+                    </button>
+                    <button id="exportBtn" class="bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg flex items-center transition">
+                        <i class="fa-solid fa-download mr-2"></i>导出报告
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 数据卡片 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- 土壤湿度 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">土壤湿度</p>
+                            <h3 class="text-3xl font-bold" id="soilMoisture">68%</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <span class="soil-change flex items-center">
+                            <img id="soilChangeIcon" class="w-4 h-4 mr-1" src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDBBQjMzIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiI+PHBhdGggZD0iTTggMS41TDQgNS41aDN2NiAzIDN2LTZoaDN6Ii8+PC9zdmc+" alt="up">
+                            <span id="soilChangeValue">2.5%</span>
+                        </span>
+                        <span class="text-gray-500 ml-2">较昨日</span>
+                    </div>
+                </div>
+                
+                <!-- 环境温度 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">环境温度</p>
+                            <h3 class="text-3xl font-bold" id="temp">25.8°C</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-warning/10 flex items-center justify-center text-warning">
+                            <i class="fa-solid fa-temperature-full"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <span class="text-danger flex items-center">
+                            <i class="fa-solid fa-arrow-up mr-1"></i> 1.2°C
+                        </span>
+                        <span class="text-gray-500 ml-2">较昨日</span>
+                    </div>
+                </div>
+                
+                <!-- 空气湿度 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">空气湿度</p>
+                            <h3 class="text-3xl font-bold" id="airHumidity">45%</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+                            <i class="fa-solid fa-wind"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <span class="text-danger flex items-center">
+                            <i class="fa-solid fa-arrow-down mr-1"></i> 3.8%
+                        </span>
+                        <span class="text-gray-500 ml-2">较昨日</span>
+                    </div>
+                </div>
+                
+                <!-- 灌溉状态 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">灌溉状态</p>
+                            <h3 class="text-3xl font-bold text-brand">运行中</h3>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand">
+                            <i class="fa-solid fa-faucet-drip"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <span class="text-gray-500">
+                            <i class="fa-solid fa-clock mr-1"></i> 今日已运行: 2.5小时
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 实时数据图表 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 土壤湿度趋势图 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold mb-4">土壤湿度趋势 (24小时)</h3>
+                    <div class="h-80">
+                        <canvas id="moistureChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 灌溉用水量统计 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold mb-4">灌溉用水量统计</h3>
+                    <div class="h-80">
+                        <canvas id="waterConsumptionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 作物灌溉方案 -->
+        <section id="crops" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">作物灌溉方案</h2>
+            
+            <!-- 作物选择器 -->
+            <div class="flex flex-wrap gap-4 mb-8">
+                <button class="crop-btn bg-brand text-white px-4 py-2 rounded-lg" data-crop="wheat">小麦</button>
+                <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg" data-crop="rice">水稻</button>
+                <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg" data-crop="corn">玉米</button>
+                <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg" data-crop="vegetable">蔬菜</button>
+                <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg" data-crop="fruit">果树</button>
+                <button class="crop-btn bg-white border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg" data-crop="cotton">棉花</button>
+                <button class="crop-btn bg-gradient-ml text-white px-4 py-2 rounded-lg hover:opacity-90 transition" data-crop="ml-crop">
+                <i class="fa-solid fa-brain mr-2"></i>机器学习
+                </button>
+                <button onclick="window.open('clustering-fuzzy.html', '_blank')" class="crop-btn bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:opacity-90 transition">
+                <i class="fa-solid fa-sitemap mr-2"></i>聚类模糊控制
+                </button>
+            </div>
+            
+            <!-- 小麦灌溉方案详情 -->
+            <div id="wheat-info" class="crop-info bg-white rounded-xl p-6 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">小麦智能灌溉方案</h3>
+                        <p class="text-gray-500">生长期：拔节期 | 最佳土壤湿度：65-75%</p>
+                    </div>
+                    <div class="flex space-x-2 mt-4 md:mt-0">
+                        <button onclick="editIrrigationPlan('wheat')" class="bg-brand/10 hover:bg-brand/20 text-brand px-4 py-2 rounded-lg flex items-center self-start transition">
+                            <i class="fa-solid fa-edit mr-2"></i>编辑方案
+                        </button>
+                        <button onclick="applyIrrigationPlan('wheat')" class="bg-brand hover:bg-brand/90 text-white px-4 py-2 rounded-lg flex items-center self-start transition">
+                            <i class="fa-solid fa-play mr-2"></i>应用方案
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 灌溉参数表格 -->
+                <div class="overflow-x-auto mb-8">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="py-3 px-4 text-left text-gray-500">灌溉参数</th>
+                                <th class="py-3 px-4 text-left text-gray-500">当前值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">目标值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">土壤湿度</td>
+                                <td class="py-3 px-4">68%</td>
+                                <td class="py-3 px-4">65-75%</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉频率</td>
+                                <td class="py-3 px-4">每3天一次</td>
+                                <td class="py-3 px-4">每2-4天一次</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">单次灌溉量</td>
+                                <td class="py-3 px-4">30m³/亩</td>
+                                <td class="py-3 px-4">25-35m³/亩</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉时间</td>
+                                <td class="py-3 px-4">06:00-08:00</td>
+                                <td class="py-3 px-4">05:00-09:00</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">水温</td>
+                                <td class="py-3 px-4">18°C</td>
+                                <td class="py-3 px-4">15-25°C</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 灌溉方式说明 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-check-circle text-brand mr-2"></i>推荐灌溉方式
+                        </h4>
+                        <p class="text-gray-600">滴灌 + 喷灌结合，滴灌为主，喷灌为辅。滴灌可以精准供水到小麦根部，减少水分蒸发，喷灌可以调节田间小气候，降低温度。</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-exclamation-circle text-warning mr-2"></i>注意事项
+                        </h4>
+                        <p class="text-gray-600">避免中午高温时段灌溉，防止根系受损；拔节期需水量大，要保证灌溉及时；定期检查灌溉设备，防止堵塞。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 水稻灌溉方案详情 -->
+            <div id="rice-info" class="crop-info hidden bg-white rounded-xl p-6 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">水稻智能灌溉方案</h3>
+                        <p class="text-gray-500">生长期：分蘖期 | 最佳土壤湿度：75-85%</p>
+                    </div>
+                    <div class="flex space-x-2 mt-4 md:mt-0">
+                        <button onclick="editIrrigationPlan('rice')" class="bg-brand/10 hover:bg-brand/20 text-brand px-4 py-2 rounded-lg flex items-center self-start transition">
+                            <i class="fa-solid fa-edit mr-2"></i>编辑方案
+                        </button>
+                        <button onclick="applyIrrigationPlan('rice')" class="bg-brand hover:bg-brand/90 text-white px-4 py-2 rounded-lg flex items-center self-start transition">
+                            <i class="fa-solid fa-play mr-2"></i>应用方案
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 灌溉参数表格 -->
+                <div class="overflow-x-auto mb-8">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="py-3 px-4 text-left text-gray-500">灌溉参数</th>
+                                <th class="py-3 px-4 text-left text-gray-500">当前值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">目标值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">土壤湿度</td>
+                                <td class="py-3 px-4">78%</td>
+                                <td class="py-3 px-4">75-85%</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉频率</td>
+                                <td class="py-3 px-4">每天一次</td>
+                                <td class="py-3 px-4">每天1-2次</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">单次灌溉量</td>
+                                <td class="py-3 px-4">45m³/亩</td>
+                                <td class="py-3 px-4">40-50m³/亩</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">水深控制</td>
+                                <td class="py-3 px-4">3-5cm</td>
+                                <td class="py-3 px-4">3-6cm</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">水温</td>
+                                <td class="py-3 px-4">22°C</td>
+                                <td class="py-3 px-4">20-30°C</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 灌溉方式说明 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-check-circle text-brand mr-2"></i>推荐灌溉方式
+                        </h4>
+                        <p class="text-gray-600">采用水层灌溉法，保持田间适当水层。分蘖期以浅水灌溉为主，促分蘖早生快发，建立合理的群体结构。</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-exclamation-circle text-warning mr-2"></i>注意事项
+                        </h4>
+                        <p class="text-gray-600">注意晒田控苗，防止无效分蘖过多；根据天气变化及时调节水层深度；注意排水系统的畅通，避免积水过深。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 玉米灌溉方案详情 -->
+            <div id="corn-info" class="crop-info hidden bg-white rounded-xl p-6 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">玉米智能灌溉方案</h3>
+                        <p class="text-gray-500">生长期：抽雄期 | 最佳土壤湿度：70-80%</p>
+                    </div>
+                    <div class="flex space-x-2 mt-4 md:mt-0">
+                        <button onclick="editIrrigationPlan('corn')" class="bg-brand/10 hover:bg-brand/20 text-brand px-4 py-2 rounded-lg flex items-center self-start transition">
+                            <i class="fa-solid fa-edit mr-2"></i>编辑方案
+                        </button>
+                        <button onclick="applyIrrigationPlan('corn')" class="bg-brand hover:bg-brand/90 text-white px-4 py-2 rounded-lg flex items-center self-start transition">
+                            <i class="fa-solid fa-play mr-2"></i>应用方案
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 灌溉参数表格 -->
+                <div class="overflow-x-auto mb-8">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="py-3 px-4 text-left text-gray-500">灌溉参数</th>
+                                <th class="py-3 px-4 text-left text-gray-500">当前值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">目标值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">土壤湿度</td>
+                                <td class="py-3 px-4">75%</td>
+                                <td class="py-3 px-4">70-80%</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉频率</td>
+                                <td class="py-3 px-4">每5天一次</td>
+                                <td class="py-3 px-4">每4-6天一次</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">单次灌溉量</td>
+                                <td class="py-3 px-4">35m³/亩</td>
+                                <td class="py-3 px-4">30-40m³/亩</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉时间</td>
+                                <td class="py-3 px-4">17:00-19:00</td>
+                                <td class="py-3 px-4">16:00-20:00</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">土壤温度</td>
+                                <td class="py-3 px-4">20°C</td>
+                                <td class="py-3 px-4">18-25°C</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 灌溉方式说明 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-check-circle text-brand mr-2"></i>推荐灌溉方式
+                        </h4>
+                        <p class="text-gray-600">采用沟灌或滴灌，抽雄期是玉米需水临界期，需保证充足水分。可采用交替灌溉技术，促进根系深扎。</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-exclamation-circle text-warning mr-2"></i>注意事项
+                        </h4>
+                        <p class="text-gray-600">抽雄期需水量最大，需及时灌溉；避免中午高温时灌溉；注意排水，玉米不耐涝，田间不能积水超过24小时。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 蔬菜灌溉方案详情 -->
+            <div id="vegetable-info" class="crop-info hidden bg-white rounded-xl p-6 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">蔬菜智能灌溉方案</h3>
+                        <p class="text-gray-500">作物类型：叶菜类 | 最佳土壤湿度：60-70%</p>
+                    </div>
+                    <button class="mt-4 md:mt-0 bg-brand/10 hover:bg-brand/20 text-brand px-4 py-2 rounded-lg flex items-center self-start transition">
+                        <i class="fa-solid fa-edit mr-2"></i>编辑方案
+                    </button>
+                </div>
+                
+                <!-- 灌溉参数表格 -->
+                <div class="overflow-x-auto mb-8">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="py-3 px-4 text-left text-gray-500">灌溉参数</th>
+                                <th class="py-3 px-4 text-left text-gray-500">当前值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">目标值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">土壤湿度</td>
+                                <td class="py-3 px-4">65%</td>
+                                <td class="py-3 px-4">60-70%</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉频率</td>
+                                <td class="py-3 px-4">每天一次</td>
+                                <td class="py-3 px-4">每天1-2次</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">单次灌溉量</td>
+                                <td class="py-3 px-4">15m³/亩</td>
+                                <td class="py-3 px-4">10-20m³/亩</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉时间</td>
+                                <td class="py-3 px-4">08:00-10:00</td>
+                                <td class="py-3 px-4">07:00-11:00</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">EC值</td>
+                                <td class="py-3 px-4">1.5 mS/cm</td>
+                                <td class="py-3 px-4">1.2-2.0 mS/cm</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 灌溉方式说明 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-check-circle text-brand mr-2"></i>推荐灌溉方式
+                        </h4>
+                        <p class="text-gray-600">采用滴灌或微喷灌，精确控制水分和养分。蔬菜需水量大但根系浅，需少量多次灌溉，保持土壤湿润但不积水。</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-exclamation-circle text-warning mr-2"></i>注意事项
+                        </h4>
+                        <p class="text-gray-600">避免叶片长时间湿润，减少病害发生；注意水质，避免高盐分水灌溉；结合施肥，实行水肥一体化管理。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 果树灌溉方案详情 -->
+            <div id="fruit-info" class="crop-info hidden bg-white rounded-xl p-6 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">果树智能灌溉方案</h3>
+                        <p class="text-gray-500">果树类型：苹果树 | 最佳土壤湿度：65-75%</p>
+                    </div>
+                    <button class="mt-4 md:mt-0 bg-brand/10 hover:bg-brand/20 text-brand px-4 py-2 rounded-lg flex items-center self-start transition">
+                        <i class="fa-solid fa-edit mr-2"></i>编辑方案
+                    </button>
+                </div>
+                
+                <!-- 灌溉参数表格 -->
+                <div class="overflow-x-auto mb-8">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="py-3 px-4 text-left text-gray-500">灌溉参数</th>
+                                <th class="py-3 px-4 text-left text-gray-500">当前值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">目标值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">土壤湿度</td>
+                                <td class="py-3 px-4">70%</td>
+                                <td class="py-3 px-4">65-75%</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉频率</td>
+                                <td class="py-3 px-4">每7天一次</td>
+                                <td class="py-3 px-4">每5-10天一次</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">单次灌溉量</td>
+                                <td class="py-3 px-4">50m³/亩</td>
+                                <td class="py-3 px-4">40-60m³/亩</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉深度</td>
+                                <td class="py-3 px-4">60cm</td>
+                                <td class="py-3 px-4">50-80cm</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">pH值</td>
+                                <td class="py-3 px-4">6.5</td>
+                                <td class="py-3 px-4">6.0-7.0</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 灌溉方式说明 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-check-circle text-brand mr-2"></i>推荐灌溉方式
+                        </h4>
+                        <p class="text-gray-600">采用滴灌或微喷灌，果树根系深，需深灌透灌。可采用分区灌溉，根据不同树龄和树势调整灌溉量。</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-exclamation-circle text-warning mr-2"></i>注意事项
+                        </h4>
+                        <p class="text-gray-600">果实膨大期需水量最大，需保证充足灌溉；采果前适当控水，提高果实品质；冬季休眠期减少灌溉，防止冻害。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 棉花灌溉方案详情 -->
+            <div id="cotton-info" class="crop-info hidden bg-white rounded-xl p-6 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">棉花智能灌溉方案</h3>
+                        <p class="text-gray-500">生长期：花铃期 | 最佳土壤湿度：60-70%</p>
+                    </div>
+                    <button class="mt-4 md:mt-0 bg-brand/10 hover:bg-brand/20 text-brand px-4 py-2 rounded-lg flex items-center self-start transition">
+                        <i class="fa-solid fa-edit mr-2"></i>编辑方案
+                    </button>
+                </div>
+                
+                <!-- 灌溉参数表格 -->
+                <div class="overflow-x-auto mb-8">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="py-3 px-4 text-left text-gray-500">灌溉参数</th>
+                                <th class="py-3 px-4 text-left text-gray-500">当前值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">目标值</th>
+                                <th class="py-3 px-4 text-left text-gray-500">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">土壤湿度</td>
+                                <td class="py-3 px-4">65%</td>
+                                <td class="py-3 px-4">60-70%</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉频率</td>
+                                <td class="py-3 px-4">每10天一次</td>
+                                <td class="py-3 px-4">每8-12天一次</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">单次灌溉量</td>
+                                <td class="py-3 px-4">40m³/亩</td>
+                                <td class="py-3 px-4">35-45m³/亩</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">灌溉时间</td>
+                                <td class="py-3 px-4">20:00-22:00</td>
+                                <td class="py-3 px-4">19:00-23:00</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-4">土壤盐分</td>
+                                <td class="py-3 px-4">0.8%</td>
+                                <td class="py-3 px-4">0.5-1.0%</td>
+                                <td class="py-3 px-4"><span class="status-online px-2 py-1 rounded-full text-sm">正常</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                
+                <!-- 灌溉方式说明 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-check-circle text-brand mr-2"></i>推荐灌溉方式
+                        </h4>
+                        <p class="text-gray-600">采用膜下滴灌，减少水分蒸发，提高水分利用效率。花铃期是棉花需水高峰期，需保证充足灌溉。</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <i class="fa-solid fa-exclamation-circle text-warning mr-2"></i>注意事项
+                        </h4>
+                        <p class="text-gray-600">避免过量灌溉导致棉株徒长；吐絮期适当控水，促进棉铃成熟；注意排水，棉花不耐涝。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 数据分析 -->
+        <section id="analysis" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">灌溉数据分析</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 不同作物耗水量对比 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold mb-4">不同作物耗水量对比</h3>
+                    <div class="h-64">
+                        <canvas id="cropWaterChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 灌溉效率分析 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold mb-4">灌溉效率分析</h3>
+                    <div class="h-64">
+                        <canvas id="efficiencyChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 产量与灌溉量关系 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold mb-4">产量与灌溉量关系</h3>
+                    <div class="h-64">
+                        <canvas id="yieldChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 机器学习智能灌溉方案 -->
+        <section id="ml-irrigation" class="mb-12">
+     <div id="ml-crop-info" class="crop-info hidden bg-white rounded-xl p-6 card-shadow">
+      <div class="flex flex-col md:flex-row justify-between mb-6">
+        <div>
+            <h3 class="text-xl font-bold mb-2">机器学习智能灌溉方案</h3>
+            <p class="text-gray-500">状态：待学习 | 创建新农作物灌溉方案</p>
+        </div>
+        <button onclick="openMLPage()" class="mt-4 md:mt-0 bg-gradient-ml hover:opacity-90 text-white px-4 py-2 rounded-lg flex items-center self-start transition">
+            <i class="fa-solid fa-plus mr-2"></i>创建新农作物
+        </button>
+    </div>
+    
+    <!-- 机器学习流程说明 -->
+    <div class="mb-8">
+        <div class="bg-gradient-ml/10 border border-ml/20 rounded-lg p-6 mb-6">
+            <h4 class="font-bold text-ml mb-4 flex items-center">
+                <i class="fa-solid fa-brain mr-2"></i>机器学习灌溉方案生成流程
+            </h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="w-12 h-12 rounded-full bg-ml/10 flex items-center justify-center text-ml mx-auto mb-2">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <h5 class="font-bold text-sm mb-1">1. 选择作物</h5>
+                    <p class="text-xs text-gray-600">输入新作物信息</p>
+                </div>
+                
+                <div class="flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-right text-ml text-lg"></i>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="w-12 h-12 rounded-full bg-ml/10 flex items-center justify-center text-ml mx-auto mb-2">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <h5 class="font-bold text-sm mb-1">2. 收集数据</h5>
+                    <p class="text-xs text-gray-600">传感器或导入数据</p>
+                </div>
+                
+                <div class="flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-right text-ml text-lg"></i>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="w-12 h-12 rounded-full bg-ml/10 flex items-center justify-center text-ml mx-auto mb-2">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <h5 class="font-bold text-sm mb-1">3. AI训练</h5>
+                    <p class="text-xs text-gray-600">机器学习模型训练</p>
+                </div>
+                
+                <div class="flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-right text-ml text-lg"></i>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4 text-center">
+                    <div class="w-12 h-12 rounded-full bg-ml/10 flex items-center justify-center text-ml mx-auto mb-2">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h5 class="font-bold text-sm mb-1">4. 生成方案</h5>
+                    <p class="text-xs text-gray-600">输出灌溉方案</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 获取传感器数据按钮 -->
+                <div onclick="showMLSection('sensor')" class="bg-white border border-ml/30 hover:border-ml rounded-lg p-4 cursor-pointer transition">
+                    <div class="flex items-center mb-2">
+                        <div class="w-10 h-10 rounded-full bg-ml/10 flex items-center justify-center text-ml mr-3">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-bold">获取传感器数据</h5>
+                            <p class="text-sm text-gray-600">实时采集田间数据</p>
+                        </div>
+                    </div>
+                    <ul class="text-xs text-gray-600 space-y-1 mt-2">
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>自动连接田间传感器</li>
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>实时数据监测</li>
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>自动数据清洗</li>
+                    </ul>
+                </div>
+                
+                <!-- 导入数据按钮 -->
+                <div onclick="showMLSection('import')" class="bg-white border border-ml/30 hover:border-ml rounded-lg p-4 cursor-pointer transition">
+                    <div class="flex items-center mb-2">
+                        <div class="w-10 h-10 rounded-full bg-ml/10 flex items-center justify-center text-ml mr-3">
+                            <i class="fa-solid fa-file-import"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-bold">导入数据文件</h5>
+                            <p class="text-sm text-gray-600">批量处理历史数据</p>
+                        </div>
+                    </div>
+                    <ul class="text-xs text-gray-600 space-y-1 mt-2">
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>支持CSV/Excel/JSON</li>
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>自动数据格式识别</li>
+                        <li><i class="fa-solid fa-check text-ml mr-1"></i>批量数据处理</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 传感器数据部分（默认隐藏） -->
+        <div id="ml-sensor-section" class="hidden">
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold mb-4 flex items-center">
+                    <i class="fa-solid fa-satellite-dish text-ml mr-2"></i>传感器数据采集
+                </h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-sm text-gray-600 mb-1">可用传感器</p>
+                        <p class="font-bold text-ml">8台</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-sm text-gray-600 mb-1">连接状态</p>
+                        <p class="font-bold text-green-600">在线</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-sm text-gray-600 mb-1">数据频率</p>
+                        <p class="font-bold">10分钟/次</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between bg-white p-3 rounded border">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-ml/10 flex items-center justify-center text-ml mr-2">
+                                <i class="fa-solid fa-droplet"></i>
+                            </div>
+                            <span>土壤湿度传感器</span>
+                        </div>
+                        <span class="text-sm text-green-600">已连接</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between bg-white p-3 rounded border">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-ml/10 flex items-center justify-center text-ml mr-2">
+                                <i class="fa-solid fa-temperature-full"></i>
+                            </div>
+                            <span>温度传感器</span>
+                        </div>
+                        <span class="text-sm text-green-600">已连接</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between bg-white p-3 rounded border">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-ml/10 flex items-center justify-center text-ml mr-2">
+                                <i class="fa-solid fa-wind"></i>
+                            </div>
+                            <span>空气湿度传感器</span>
+                        </div>
+                        <span class="text-sm text-green-600">已连接</span>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button onclick="startMLDataCollection()" class="w-full bg-ml hover:bg-ml/90 text-white py-2 rounded-lg font-medium">
+                        <i class="fa-solid fa-play mr-2"></i>开始采集数据
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 导入数据部分（默认隐藏） -->
+        <div id="ml-import-section" class="hidden">
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold mb-4 flex items-center">
+                    <i class="fa-solid fa-file-import text-ml mr-2"></i>数据文件导入
+                </h4>
+                
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-4">
+                    <div class="w-16 h-16 rounded-full bg-ml/10 flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-cloud-upload-alt text-2xl text-ml"></i>
+                    </div>
+                    <h5 class="font-bold mb-2">拖放文件到此处</h5>
+                    <p class="text-gray-600 mb-4">支持 CSV, Excel, JSON 格式</p>
+                    <button onclick="document.getElementById('ml-file-input').click()" class="bg-ml hover:bg-ml/90 text-white px-4 py-2 rounded-lg">
+                        <i class="fa-solid fa-folder-open mr-2"></i>选择文件
+                    </button>
+                    <input type="file" id="ml-file-input" class="hidden" onchange="handleMLFileSelect(event)">
+                </div>
+                
+                <div id="ml-file-info" class="hidden">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-medium">已选择文件：</span>
+                            <span id="ml-file-name" class="text-ml"></span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span>文件大小：</span>
+                            <span id="ml-file-size"></span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>数据行数：</span>
+                            <span id="ml-data-rows" class="font-bold">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button onclick="startMLTraining()" class="w-full bg-ml hover:bg-ml/90 text-white py-2 rounded-lg font-medium">
+                            <i class="fa-solid fa-brain mr-2"></i>开始机器学习训练
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 机器学习训练进度（默认隐藏） -->
+        <div id="ml-training-progress" class="hidden">
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold mb-4 flex items-center">
+                    <i class="fa-solid fa-cogs text-ml mr-2"></i>机器学习训练进度
+                </h4>
+                
+                <div class="mb-4">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-gray-700">训练进度</span>
+                        <span id="ml-progress-percent" class="font-bold text-ml">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="ml-progress-fill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div id="ml-training-logs" class="space-y-2 mb-4">
+                    <div class="text-sm text-gray-600 flex items-center">
+                        <i class="fa-solid fa-circle text-xs text-gray-400 mr-2"></i>
+                        <span>等待开始训练...</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="startMLTrainingProcess()" id="ml-start-btn" class="bg-ml hover:bg-ml/90 text-white py-2 rounded-lg font-medium">
+                        <i class="fa-solid fa-play mr-2"></i>开始训练
+                    </button>
+                    <button onclick="resetMLTraining()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg font-medium">
+                        <i class="fa-solid fa-redo mr-2"></i>重置
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 灌溉方案预览（默认隐藏） -->
+    <div id="ml-irrigation-preview" class="hidden">
+        <div class="overflow-x-auto mb-6">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="border-b">
+                        <th class="py-3 px-4 text-left text-gray-500">灌溉参数</th>
+                        <th class="py-3 px-4 text-left text-gray-500">推荐值</th>
+                        <th class="py-3 px-4 text-left text-gray-500">范围</th>
+                        <th class="py-3 px-4 text-left text-gray-500">说明</th>
+                    </tr>
+                </thead>
+                <tbody id="ml-irrigation-table">
+                    <!-- 动态生成表格行 -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- 灌溉方式说明 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold mb-2 flex items-center">
+                    <i class="fa-solid fa-check-circle text-brand mr-2"></i>AI推荐灌溉方式
+                </h4>
+                <p class="text-gray-600" id="ml-irrigation-method">等待生成...</p>
+            </div>
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-bold mb-2 flex items-center">
+                    <i class="fa-solid fa-exclamation-circle text-warning mr-2"></i>AI优化建议
+                </h4>
+                <p class="text-gray-600" id="ml-optimization-tips">等待生成...</p>
+            </div>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <button onclick="saveMLIrrigationPlan()" class="bg-ml hover:bg-ml/90 text-white px-6 py-3 rounded-lg font-medium">
+                <i class="fa-solid fa-save mr-2"></i>保存灌溉方案
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 在页面JavaScript部分添加以下函数 -->
+<script>
+// 添加CSS样式
+const style = document.createElement('style');
+style.textContent = `
+    .bg-gradient-ml {
+        background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+    }
+    .progress-bar {
+        height: 8px;
+        border-radius: 4px;
+        background: #E5E7EB;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #8B5CF6, #6366F1);
+        transition: width 0.5s ease;
+    }
+`;
+document.head.appendChild(style);
+
+// 打开机器学习页面
+function openMLPage() {
+    window.open('machine-learning.html', '_blank');
+}
+
+// 显示机器学习部分
+function showMLSection(type) {
+    // 隐藏所有ML部分
+    document.getElementById('ml-sensor-section').classList.add('hidden');
+    document.getElementById('ml-import-section').classList.add('hidden');
+    document.getElementById('ml-training-progress').classList.add('hidden');
+    document.getElementById('ml-irrigation-preview').classList.add('hidden');
+    
+    // 显示选中的部分
+    if (type === 'sensor') {
+        document.getElementById('ml-sensor-section').classList.remove('hidden');
+    } else if (type === 'import') {
+        document.getElementById('ml-import-section').classList.remove('hidden');
+    }
+}
+
+// 处理文件选择
+function handleMLFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const fileInfo = document.getElementById('ml-file-info');
+        const fileName = document.getElementById('ml-file-name');
+        const fileSize = document.getElementById('ml-file-size');
+        const dataRows = document.getElementById('ml-data-rows');
+        
+        // 显示文件信息
+        fileName.textContent = file.name;
+        fileSize.textContent = (file.size / 1024).toFixed(2) + ' KB';
+        dataRows.textContent = Math.floor(Math.random() * 1000) + 500; // 模拟数据行数
+        
+        fileInfo.classList.remove('hidden');
+        
+        // 显示成功通知
+        showNotification('文件上传成功: ' + file.name, 'success');
+    }
+}
+
+// 开始数据采集
+function startMLDataCollection() {
+    // 显示训练进度部分
+    document.getElementById('ml-training-progress').classList.remove('hidden');
+    document.getElementById('ml-sensor-section').classList.add('hidden');
+    
+    // 开始模拟训练
+    simulateMLTraining('sensor');
+}
+
+// 开始机器学习训练
+function startMLTraining() {
+    // 显示训练进度部分
+    document.getElementById('ml-training-progress').classList.remove('hidden');
+    document.getElementById('ml-import-section').classList.add('hidden');
+    
+    // 开始模拟训练
+    simulateMLTraining('import');
+}
+
+// 模拟机器学习训练
+function simulateMLTraining(type) {
+    const progressPercent = document.getElementById('ml-progress-percent');
+    const progressFill = document.getElementById('ml-progress-fill');
+    const trainingLogs = document.getElementById('ml-training-logs');
+    const startBtn = document.getElementById('ml-start-btn');
+    
+    // 清空日志
+    trainingLogs.innerHTML = '';
+    
+    // 禁用开始按钮
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<i class="fa-solid fa-cog fa-spin mr-2"></i>训练中';
+    startBtn.classList.remove('bg-ml', 'hover:bg-ml/90');
+    startBtn.classList.add('bg-gray-400');
+    
+    const trainingSteps = [
+        { progress: 10, message: '正在初始化机器学习环境...' },
+        { progress: 20, message: '加载训练数据...' },
+        { progress: 30, message: '数据预处理中...' },
+        { progress: 40, message: '特征工程处理...' },
+        { progress: 50, message: '训练随机森林模型...' },
+        { progress: 60, message: '模型交叉验证...' },
+        { progress: 70, message: '参数调优优化...' },
+        { progress: 80, message: '模型性能评估...' },
+        { progress: 90, message: '生成灌溉方案...' },
+        { progress: 100, message: '训练完成！' }
+    ];
+    
+    let currentStep = 0;
+    
+    function updateProgress() {
+        if (currentStep < trainingSteps.length) {
+            const step = trainingSteps[currentStep];
+            
+            // 更新进度条
+            progressPercent.textContent = step.progress + '%';
+            progressFill.style.width = step.progress + '%';
+            
+            // 添加日志
+            const logEntry = document.createElement('div');
+            logEntry.className = 'text-sm text-gray-600 flex items-center';
+            logEntry.innerHTML = `
+                <i class="fa-solid fa-circle text-xs ${step.progress === 100 ? 'text-green-500' : 'text-gray-400'} mr-2"></i>
+                <span>${step.message}</span>
+            `;
+            trainingLogs.appendChild(logEntry);
+            
+            // 滚动到最新日志
+            logEntry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            currentStep++;
+            
+            // 如果是最后一步，显示结果
+            if (step.progress === 100) {
+                setTimeout(() => {
+                    generateMLIrrigationPlan(type);
+                }, 1000);
+            } else {
+                // 继续下一步
+                setTimeout(updateProgress, 800 + Math.random() * 400);
+            }
+        }
+    }
+    
+    // 开始更新进度
+    setTimeout(updateProgress, 500);
+}
+
+// 开始训练过程
+function startMLTrainingProcess() {
+    // 这里可以添加实际开始训练的逻辑
+    // 现在先模拟训练
+    simulateMLTraining('manual');
+}
+
+// 重置训练
+function resetMLTraining() {
+    const progressPercent = document.getElementById('ml-progress-percent');
+    const progressFill = document.getElementById('ml-progress-fill');
+    const trainingLogs = document.getElementById('ml-training-logs');
+    const startBtn = document.getElementById('ml-start-btn');
+    
+    // 重置进度
+    progressPercent.textContent = '0%';
+    progressFill.style.width = '0%';
+    
+    // 重置日志
+    trainingLogs.innerHTML = `
+        <div class="text-sm text-gray-600 flex items-center">
+            <i class="fa-solid fa-circle text-xs text-gray-400 mr-2"></i>
+            <span>等待开始训练...</span>
+        </div>
+    `;
+    
+    // 启用开始按钮
+    startBtn.disabled = false;
+    startBtn.innerHTML = '<i class="fa-solid fa-play mr-2"></i>开始训练';
+    startBtn.classList.remove('bg-gray-400');
+    startBtn.classList.add('bg-ml', 'hover:bg-ml/90');
+}
+
+// 生成灌溉方案
+function generateMLIrrigationPlan(type) {
+    // 模拟作物名称
+    const cropNames = ['咖啡树', '甘蔗', '茶叶', '橡胶树', '中药材'];
+    const cropName = cropNames[Math.floor(Math.random() * cropNames.length)];
+    
+    // 更新标题
+    const title = document.querySelector('#ml-crop-info .text-xl');
+    if (title) {
+        title.textContent = cropName + '智能灌溉方案';
+    }
+    
+    const subtitle = document.querySelector('#ml-crop-info .text-gray-500');
+    if (subtitle) {
+        subtitle.textContent = 'AI生成方案 | 准确率：' + (85 + Math.random() * 10).toFixed(1) + '%';
+    }
+    
+    // 生成灌溉参数表格
+    const tableBody = document.getElementById('ml-irrigation-table');
+    tableBody.innerHTML = '';
+    
+    const irrigationParams = [
+        { param: '土壤湿度', value: (65 + Math.random() * 10).toFixed(1) + '%', range: '60-75%', desc: 'AI推荐最优湿度' },
+        { param: '灌溉频率', value: '每' + (3 + Math.floor(Math.random() * 3)) + '天一次', range: '每2-5天一次', desc: '基于作物需水规律' },
+        { param: '单次灌溉量', value: (25 + Math.random() * 15).toFixed(1) + 'm³/亩', range: '20-40m³/亩', desc: 'AI计算最优水量' },
+        { param: '灌溉时间', value: '06:00-08:00', range: '05:00-09:00', desc: '减少蒸发损失' },
+        { param: '水温要求', value: (18 + Math.random() * 5).toFixed(1) + '°C', range: '15-25°C', desc: '促进根系吸收' },
+        { param: 'pH值范围', value: (6.0 + Math.random() * 0.8).toFixed(1), range: '5.8-7.0', desc: '适宜生长环境' }
+    ];
+    
+    irrigationParams.forEach(param => {
+        const row = document.createElement('tr');
+        row.className = 'border-b';
+        row.innerHTML = `
+            <td class="py-3 px-4 font-medium">${param.param}</td>
+            <td class="py-3 px-4 text-ml font-bold">${param.value}</td>
+            <td class="py-3 px-4 text-gray-600">${param.range}</td>
+            <td class="py-3 px-4 text-gray-600 text-sm">${param.desc}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    // 生成灌溉方式说明
+    const irrigationMethods = [
+        '采用滴灌+微喷结合，滴灌为主提供根系水分，微喷调节田间小气候。',
+        '推荐分区灌溉技术，根据土壤质地差异调整各区灌溉量和频率。',
+        '采用水肥一体化技术，精准控制水分和养分，提高资源利用效率。',
+        '结合智能控制，实现按需精准灌溉，减少水分浪费。'
+    ];
+    
+    const optimizationTips = [
+        'AI建议增加有机肥使用，提高土壤保水能力。',
+        '建议安装土壤湿度传感器，实时监测调整灌溉策略。',
+        '结合天气预报数据，提前调整灌溉计划。',
+        '注意排水系统维护，防止积水影响作物生长。'
+    ];
+    
+    document.getElementById('ml-irrigation-method').textContent = 
+        irrigationMethods[Math.floor(Math.random() * irrigationMethods.length)];
+    
+    document.getElementById('ml-optimization-tips').textContent = 
+        optimizationTips[Math.floor(Math.random() * optimizationTips.length)];
+    
+    // 显示灌溉方案预览
+    document.getElementById('ml-irrigation-preview').classList.remove('hidden');
+    document.getElementById('ml-training-progress').classList.add('hidden');
+    
+    // 滚动到预览部分
+    document.getElementById('ml-irrigation-preview').scrollIntoView({ behavior: 'smooth' });
+    
+    // 显示成功通知
+    showNotification('机器学习灌溉方案生成成功！', 'success');
+}
+
+// 保存灌溉方案
+function saveMLIrrigationPlan() {
+    const cropName = document.querySelector('#ml-crop-info .text-xl').textContent.replace('智能灌溉方案', '').trim();
+    
+    // 模拟保存过程
+    const saveBtn = document.querySelector('#ml-irrigation-preview button');
+    const originalText = saveBtn.innerHTML;
+    
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>保存中...';
+    saveBtn.disabled = true;
+    
+    setTimeout(() => {
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+        
+        showNotification(`${cropName}灌溉方案已保存到系统！`, 'success');
+        
+        // 3秒后刷新页面显示新的作物
+        setTimeout(() => {
+            location.reload();
+        }, 3000);
+    }, 1500);
+}
+
+// 显示通知
+function showNotification(message, type = 'info') {
+    const typeClasses = {
+        success: 'bg-green-100 border-green-400 text-green-700',
+        error: 'bg-red-100 border-red-400 text-red-700',
+        warning: 'bg-yellow-100 border-yellow-400 text-yellow-700',
+        info: 'bg-blue-100 border-blue-400 text-blue-700'
+    };
+    
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-4 py-3 rounded-lg border shadow-lg z-50 ${typeClasses[type]}`;
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fa-solid fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'} mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 3秒后自动消失
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+</script>
+        
+        
+        <!-- 硬件监控 -->
+        <section id="hardware" class="mb-12">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">硬件设备监控</h2>
+                <button id="openGlobalConnectBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+                    <i class="fa-solid fa-plug mr-2"></i>连接设备
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 传感器1 -->
+                <div class="bg-white rounded-xl p-6 card-shadow" data-device-id="sensor_001">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-bold">土壤湿度传感器 #001</h3>
+                            <p class="text-gray-500 text-sm">麦田区域 | 安装时间：2026-01-15</p>
+                        </div>
+                        <span class="status-offline device-status px-2 py-1 rounded-full text-sm" data-device-id="sensor_001">不在线</span>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">当前读数</span>
+                            <span class="font-medium">68.2%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">信号强度</span>
+                            <span class="font-medium">98%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">电池电量</span>
+                            <span class="font-medium">85%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">最后上报</span>
+                            <span class="font-medium">2分钟前</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-brand/10 hover:bg-brand/20 text-brand px-3 py-2 rounded-lg text-sm transition sensor-refresh-btn" data-device-id="sensor_001">
+                            <i class="fa-solid fa-refresh mr-1"></i>刷新
+                        </button>
+                        <button class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-cog mr-1"></i>设置
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 控制器 -->
+                <div class="bg-white rounded-xl p-6 card-shadow" data-device-id="controller_001">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-bold">智能灌溉控制器 #001</h3>
+                            <p class="text-gray-500 text-sm">主控制器 | 安装时间：2026-01-4</p>
+                        </div>
+                        <span class="status-offline device-status px-2 py-1 rounded-full text-sm" data-device-id="controller_001">不在线</span>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">运行状态</span>
+                            <span class="font-medium text-brand">正常运行</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">连接设备数</span>
+                            <span class="font-medium">8台</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">累计运行时长</span>
+                            <span class="font-medium">1258小时</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">软件版本</span>
+                            <span class="font-medium">v2.5.8</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-brand/10 hover:bg-brand/20 text-brand px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-play mr-1"></i>启动
+                        </button>
+                        <button class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-pause mr-1"></i>暂停
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 水泵 -->
+                <div class="bg-white rounded-xl p-6 card-shadow" data-device-id="pump_001">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-bold">智能水泵 #001</h3>
+                            <p class="text-gray-500 text-sm">北灌溉区 | 安装时间：2026-01-12</p>
+                        </div>
+                        <span class="status-offline device-status px-2 py-1 rounded-full text-sm" data-device-id="pump_001">不在线</span>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">运行状态</span>
+                            <span class="font-medium text-warning">压力偏低</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">出水压力</span>
+                            <span class="font-medium">1.2MPa (标准: 1.5-2.0MPa)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">运行功率</span>
+                            <span class="font-medium">7.5kW</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">累计工作时长</span>
+                            <span class="font-medium">896小时</span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-warning/10 hover:bg-warning/20 text-warning px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-exclamation-triangle mr-1"></i>查看故障
+                        </button>
+                        <button class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 px-3 py-2 rounded-lg text-sm transition">
+                            <i class="fa-solid fa-tools mr-1"></i>维护
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+           <!-- 设备地图 -->
+ <div class="mt-8 bg-white rounded-xl p-6 card-shadow">
+    <h3 class="text-lg font-bold mb-4">设备分布地图</h3>
+    <div id="deviceMap" class="h-80 rounded-lg"></div>
+    <div class="mt-4 flex space-x-2">
+        <button id="zoomInBtn" class="bg-brand/10 hover:bg-brand/20 text-brand px-3 py-2 rounded-lg text-sm transition">
+            <i class="fa-solid fa-magnifying-glass-plus mr-1"></i>放大
+        </button>
+        <button id="zoomOutBtn" class="bg-brand/10 hover:bg-brand/20 text-brand px-3 py-2 rounded-lg text-sm transition">
+            <i class="fa-solid fa-magnifying-glass-minus mr-1"></i>缩小
+        </button>
+        <button id="resetMapBtn" class="bg-brand/10 hover:bg-brand/20 text-brand px-3 py-2 rounded-lg text-sm transition">
+            <i class="fa-solid fa-location-crosshairs mr-1"></i>重置视图
+        </button>
+    </div>
+ </div>
+        
+        <!-- 智能建议 -->
+        <!-- 设备连接脚本 -->
+        <script>
+            // 打开连接设备模态（deviceId 可选）
+            function openConnectModal(deviceId) {
+                const savedBackend = localStorage.getItem('device_backend_url') || '';
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+
+                const showDeviceInput = !deviceId;
+                modal.innerHTML = `
+                    <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold">连接设备${deviceId ? ': ' + deviceId : ''}</h3>
+                            <button class="close-modal text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
+                        </div>
+                        ${showDeviceInput ? `
+                        <div class="mb-3">
+                            <label class="block text-sm text-gray-700 mb-1">设备 ID</label>
+                            <input id="deviceIdInput" class="w-full px-3 py-2 border rounded" placeholder="例如: sensor_001 或 controller_001">
+                        </div>
+                        ` : ''}
+                        <div class="mb-3">
+                            <label class="block text-sm text-gray-700 mb-1">后端服务地址</label>
+                            <input id="backendUrlInput" class="w-full px-3 py-2 border rounded" placeholder="http://localhost:3000" value="${savedBackend}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm text-gray-700 mb-1">端口/设备标识（可选）</label>
+                            <input id="devicePortInput" class="w-full px-3 py-2 border rounded" placeholder="例如: /dev/ttyUSB0 或 COM3">
+                        </div>
+                        <div class="flex justify-end space-x-2 pt-3 border-t">
+                            <button class="close-modal px-4 py-2 bg-gray-200 rounded">取消</button>
+                            <button id="confirmConnect" class="px-4 py-2 bg-green-600 text-white rounded">连接</button>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+                modal.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('click', () => modal.remove()));
+
+                modal.querySelector('#confirmConnect').addEventListener('click', async () => {
+                    let backend = document.getElementById('backendUrlInput').value.trim();
+                    const port = document.getElementById('devicePortInput').value.trim();
+                    let targetDeviceId = deviceId;
+                    if (!backend) { alert('请输入后端服务地址'); return; }
+                    if (showDeviceInput) {
+                        targetDeviceId = document.getElementById('deviceIdInput').value.trim();
+                        if (!targetDeviceId) { alert('请输入设备 ID'); return; }
+                    }
+                    localStorage.setItem('device_backend_url', backend);
+                    modal.remove();
+                    const statusSpan = document.querySelector(`.device-status[data-device-id="${targetDeviceId}"]`);
+                    startDeviceConnection(backend, port, targetDeviceId, statusSpan);
+                });
+            }
+
+            // 请求后端连接并轮询状态（使用 localStorage 或默认后端构造 API 基址）
+            async function startDeviceConnection(backendUrl, port, deviceId, statusSpan) {
+                if (!deviceId) return;
+
+                // 使用全局 API_BASE（已设置为 ngrok 地址）；仍保留传入 backendUrl 作为回退
+                const apiBase = (window.API_BASE || (backendUrl || localStorage.getItem('device_backend_url') || window.DEFAULT_BACKEND_ORIGIN || '').replace(/\/$/, '') + '/api').replace(/\/$/, '');
+                const token = window.getAuthToken();
+
+                try {
+                    await fetch(apiBase + '/connect', {
+                        method: 'POST',
+                        headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: `Bearer ${token}` } : {}),
+                        body: JSON.stringify({ deviceId, port })
+                    });
+                } catch (err) {
+                    showNotification('无法连接到后端，请检查地址和网络', 'error');
+                    return;
+                }
+                showNotification('已请求后端开始连接设备，正在检测状态...', 'info');
+
+                const poll = async () => {
+                    try {
+                        const statusUrl = apiBase + `/status?deviceId=${encodeURIComponent(deviceId)}`;
+                        const res = await fetch(statusUrl, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+                        if (!res.ok) throw new Error('网络错误');
+                        const data = await res.json();
+                        const online = !!data.online;
+                        updateDeviceStatusUI(deviceId, online);
+                        if (!online) setTimeout(poll, 2000);
+                        else showNotification(`设备 ${deviceId} 已上线`, 'success');
+                    } catch (err) {
+                        setTimeout(poll, 3000);
+                    }
+                };
+                poll();
+            }
+
+            function updateDeviceStatusUI(deviceId, online) {
+                const span = document.querySelector(`.device-status[data-device-id="${deviceId}"]`);
+                if (!span) return;
+                if (online) {
+                    span.classList.remove('status-offline'); span.classList.add('status-online'); span.textContent = '在线';
+                    // 如果之前有关于该设备的报警，清空
+                    if (window.currentDeviceAlert === deviceId) showAlert('','info');
+                }
+                else {
+                    span.classList.remove('status-online'); span.classList.add('status-offline'); span.textContent = '不在线';
+                    showAlert(`设备 ${deviceId} 未连接`, 'error');
+                    window.currentDeviceAlert = deviceId;
+                }
+            }
+
+            document.addEventListener('click', function(e) {
+                const btn = e.target.closest('.connect-device-btn');
+                if (btn) { const deviceId = btn.getAttribute('data-device-id'); openConnectModal(deviceId); }
+                const globalBtn = e.target.closest('#openGlobalConnectBtn');
+                if (globalBtn) { openConnectModal(); }
+            });
+            // 初始化 Leaflet 地图（增强：在高度为 0 时设置默认高度并重试）
+            document.addEventListener('DOMContentLoaded', function() {
+                try {
+                    const mapEl = document.getElementById('deviceMap');
+                    if (!mapEl) return;
+
+                    // 如果容器高度为 0（可能被折叠或样式未应用），设置一个明确高度
+                    const compStyle = window.getComputedStyle(mapEl);
+                    if (mapEl.clientHeight === 0 || compStyle.display === 'none') {
+                        mapEl.style.height = mapEl.style.height || '400px';
+                    }
+
+                    // 如果 userData.js 提供 initDeviceMap，优先使用它，避免重复初始化
+                    if (window.initDeviceMap && typeof window.initDeviceMap === 'function') {
+                        // 延迟调用以确保 DOM/CSS 应用完成
+                        setTimeout(() => {
+                            if (!window.deviceMap) {
+                                try { window.initDeviceMap(); } catch (err) { console.error('initDeviceMap 错误', err); }
+                            }
+                            // 重绘
+                            try { window.deviceMap && window.deviceMap.invalidateSize(); } catch (e) { /* ignore */ }
+                        }, 300);
+                    } else {
+                        // 备用：在没有 initDeviceMap 的情况下创建地图
+                        const defaultCenter = [34.3416, 108.9398];
+                        const deviceMap = L.map('deviceMap').setView(defaultCenter, 8);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                            attribution: '&copy; OpenStreetMap contributors'
+                        }).addTo(deviceMap);
+
+                        const refresh = () => { try { deviceMap.invalidateSize(); } catch (e) {} };
+                        refresh(); setTimeout(refresh, 300); setTimeout(refresh, 1000);
+                        window.addEventListener('resize', refresh);
+                    }
+                } catch (err) {
+                    console.error('初始化设备地图失败', err);
+                }
+            });
+        </script>
+
+        <section id="suggestion" class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">AI智能灌溉建议</h2>
+            
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex flex-col md:flex-row justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">乡业绿禾 - 基于大数据分析的灌溉建议</h3>
+                        <p id="aiSuggestionInfo" class="text-gray-500">更新时间：2026-02-10 08:30 | 分析数据量：128,546条</p>
+                    </div>
+                    <button id="reanalyzeBtn" class="mt-4 md:mt-0 bg-brand hover:bg-brand/90 text-white px-4 py-2 rounded-lg flex items-center self-start transition">
+                        <i class="fa-solid fa-microchip mr-2"></i>重新分析
+                    </button>
+                </div>
+                <!-- AI 查询搜索框 -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2" for="aiQueryInput">向AI提问：</label>
+                    <div class="flex space-x-2">
+                        <textarea id="aiQueryInput" rows="2" placeholder="请输入问题" class="flex-1 px-3 py-2 border rounded resize-none"></textarea>
+                        <button id="aiQueryBtn" class="bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded">查询</button>
+                    </div>
+                    <textarea id="aiQueryResult" rows="4" readonly class="mt-3 w-full px-3 py-2 border rounded bg-gray-100 text-gray-800"></textarea>
+                </div>
+                <!-- 建议列表 -->
+                <div id="suggestionList" class="space-y-6">
+                    <!-- 建议1 -->
+                    <div class="border-l-4 border-brand pl-4 py-2">
+                        <h4 class="font-bold mb-1">灌溉时间调整建议</h4>
+                        <p class="text-gray-600">根据未来3天天气预报（气温26-30°C，无降雨），建议将小麦灌溉时间调整至每日05:00-07:00，避开高温时段，减少水分蒸发，预计可节水15%。</p>
+                    </div>
+                    
+                    <!-- 建议2 -->
+                    <div class="border-l-4 border-warning pl-4 py-2">
+                        <h4 class="font-bold mb-1">设备维护建议</h4>
+                        <p class="text-gray-600">水泵#001出水压力连续3天低于标准值，建议检查水泵叶轮是否堵塞或磨损，及时进行维护，避免影响灌溉效果。</p>
+                    </div>
+                    
+                    <!-- 建议3 -->
+                    <div class="border-l-4 border-brand pl-4 py-2">
+                        <h4 class="font-bold mb-1">灌溉量优化建议</h4>
+                        <p class="text-gray-600">小麦拔节期需水量增加，但当前土壤保水能力良好，建议灌溉量维持30m³/亩，灌溉频率调整为每2天一次，可提高产量约8%。</p>
+                    </div>
+                    
+                    <!-- 建议4 -->
+                    <div class="border-l-4 border-secondary pl-4 py-2">
+                        <h4 class="font-bold mb-1">分区灌溉建议</h4>
+                        <p class="text-gray-600">根据土壤湿度传感器数据，麦田东区湿度(72%)高于西区(62%)，建议实施分区差异化灌溉，东区灌溉量减少20%，西区增加15%，实现精准灌溉。</p>
+                    </div>
+                    
+                    <!-- 建议5 -->
+                    <div class="border-l-4 border-brand pl-4 py-2">
+                        <h4 class="font-bold mb-1">施肥灌溉结合建议</h4>
+                        <p class="text-gray-600">建议在下次灌溉时添加氮磷钾复合肥，浓度控制在0.5%，通过水肥一体化技术，提高肥料利用率，减少肥料流失，预计可节约肥料成本12%。</p>
+                    </div>
+                </div>
+                
+                <!-- 执行建议 -->
+                <div class="mt-8 flex justify-end">
+                    <button class="bg-brand hover:bg-brand/90 text-white px-6 py-3 rounded-lg flex items-center transition">
+                        <i class="fa-solid fa-rocket mr-2"></i>执行智能建议
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+   <!-- 页脚 -->
+ <footer class="bg-dark text-white py-8">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-lg font-bold mb-4 flex items-center">
+                    <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/ae10c927211a4d40a7ce83dc0d6d62b0.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260203224317F56453BF2EEA2D01E594&rrcfp=dafada99&x-expires=2086353797&x-signature=eTC2QeGqQdxxHpf5UMQFHG7AwFk%3D" 
+                         alt="乡业绿禾灌溉科技有限公司" 
+                         class="h-8 w-auto rounded mr-2">
+                    乡业绿禾灌溉科技有限公司
+                </h3>
+                <p class="text-gray-400 mb-4">
+                    基于大数据和人工智能的智能灌溉系统，
+                    精准灌溉，节水增效，助力农业现代化发展。
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fa-solid fa-envelope"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fa-solid fa-phone"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fa-solid fa-question-circle"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-bold mb-4">快速链接</h3>
+                <ul class="space-y-2">
+                    <li><a href="#dashboard" class="text-gray-400 hover:text-white transition">仪表盘</a></li>
+                    <li><a href="#crops" class="text-gray-400 hover:text-white transition">作物灌溉方案</a></li>
+                    <li><a href="#analysis" class="text-gray-400 hover:text-white transition">数据分析</a></li>
+                    <li><a href="#hardware" class="text-gray-400 hover:text-white transition">硬件监控</a></li>
+                    <li><a href="#suggestion" class="text-gray-400 hover:text-white transition">智能建议</a></li>
+                    <!-- 添加公司页面链接 -->
+                    <li><a href="company.html" class="text-gray-400 hover:text-white transition font-bold">关于我们</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-bold mb-4">系统信息</h3>
+                <ul class="space-y-2">
+                    <li class="text-gray-400">版本号: v1.0.0</li>
+                    <li class="text-gray-400">更新时间: 2026-02-10</li>
+                    <li class="text-gray-400">数据采集点: 28个</li>
+                    <li class="text-gray-400">服务热线: 18291248918</li>
+                    <li class="text-gray-400">技术支持: 3362024376@qq.com</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 添加公司信息按钮 -->
+        <div class="flex justify-center mt-8">
+            <a href="company.html" 
+               class="bg-brand hover:bg-brand/90 text-white px-6 py-3 rounded-lg flex items-center transition hover:scale-105">
+                <i class="fa-solid fa-building mr-2"></i>了解公司信息
+            </a>
+        </div>
+        
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+            <p>© 2026 乡业绿禾灌溉科技有限公司 版权所有</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- JavaScript -->
+    <!-- WebSocket 控制（浮动按钮） -->
+    <div id="wsControl" class="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-2">
+        <button id="wsStatusBtn" class="px-4 py-2 rounded-full text-white bg-gray-400 shadow-lg">WS: 未连接</button>
+        <button id="wsReconnectBtn" class="px-3 py-2 rounded-lg bg-white border border-gray-200 text-sm shadow">重连</button>
+    </div>
+    <script>
+        // 移动端菜单切换
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (icon.classList.contains('fa-bars')) {
+                icon.classList.replace('fa-bars', 'fa-times');
+            } else {
+                icon.classList.replace('fa-times', 'fa-bars');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 关闭移动端菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        const icon = mobileMenuBtn.querySelector('i');
+                        icon.classList.replace('fa-times', 'fa-bars');
+                    }
+                }
+            });
+        });
+        
+        // 作物按钮切换功能
+        const cropBtns = document.querySelectorAll('.crop-btn');
+        const cropInfos = document.querySelectorAll('.crop-info');
+        
+        cropBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const cropType = btn.getAttribute('data-crop');
+                
+                // 重置所有按钮样式
+                cropBtns.forEach(b => {
+                    b.classList.remove('bg-brand', 'text-white');
+                    b.classList.add('bg-white', 'border', 'border-gray-300', 'hover:bg-gray-50');
+                });
+                
+                // 设置当前按钮样式
+                btn.classList.remove('bg-white', 'border', 'border-gray-300', 'hover:bg-gray-50');
+                btn.classList.add('bg-brand', 'text-white');
+                
+                // 隐藏所有作物信息
+                cropInfos.forEach(info => {
+                    info.classList.add('hidden');
+                });
+                
+                // 显示当前选择的作物信息
+                const currentCropInfo = document.getElementById(`${cropType}-info`);
+                if (currentCropInfo) {
+                    currentCropInfo.classList.remove('hidden');
+                }
+            });
+        });
+        
+        // 土壤湿度趋势图表
+        const moistureCtx = document.getElementById('moistureChart').getContext('2d');
+        new Chart(moistureCtx, {
+            type: 'line',
+            data: {
+                labels: ['0:00', '2:00', '4:00', '6:00', '8:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                datasets: [{
+                    label: '土壤湿度 (%)',
+                    data: [72, 71, 70, 69, 68, 67, 65, 64, 66, 67, 68, 69],
+                    borderColor: '#0F766E',
+                    backgroundColor: 'rgba(15, 118, 110, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: '目标湿度 (%)',
+                    data: [70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70],
+                    borderColor: '#9CA3AF',
+                    borderDash: [5, 5],
+                    tension: 0,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 60,
+                        max: 75,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 灌溉用水量统计图表
+        const waterConsumptionCtx = document.getElementById('waterConsumptionChart').getContext('2d');
+        new Chart(waterConsumptionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                datasets: [{
+                    label: '灌溉用水量 (m³)',
+                    data: [120, 135, 110, 140, 125, 90, 85],
+                    backgroundColor: '#0EA5E9',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // 更新时间显示
+function updateDashboardTime() {
+    const el = document.getElementById('dashboardTime');
+    if (!el) return;
+    const now = new Date();
+    el.textContent = '最后刷新: ' + now.toLocaleString();
+}
+
+// 不同作物耗水量对比图表
+        const cropWaterCtx = document.getElementById('cropWaterChart').getContext('2d');
+        new Chart(cropWaterCtx, {
+            type: 'radar',
+            data: {
+                labels: ['苗期', '分蘖期', '拔节期', '抽穗期', '灌浆期', '成熟期'],
+                datasets: [{
+                    label: '小麦',
+                    data: [40, 60, 80, 90, 70, 30],
+                    backgroundColor: 'rgba(15, 118, 110, 0.2)',
+                    borderColor: '#0F766E',
+                    pointBackgroundColor: '#0F766E'
+                }, {
+                    label: '水稻',
+                    data: [50, 70, 90, 100, 80, 40],
+                    backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                    borderColor: '#0EA5E9',
+                    pointBackgroundColor: '#0EA5E9'
+                }, {
+                    label: '玉米',
+                    data: [30, 50, 70, 80, 60, 20],
+                    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                    borderColor: '#F59E0B',
+                    pointBackgroundColor: '#F59E0B'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 灌溉效率分析图表
+        const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
+        new Chart(efficiencyCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['有效利用', '蒸发损失', '渗透损失', '其他损失'],
+                datasets: [{
+                    data: [75, 10, 12, 3],
+                    backgroundColor: [
+                        '#0F766E',
+                        '#F59E0B',
+                        '#EF4444',
+                        '#9CA3AF'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '灌溉水利用效率: 75%',
+                        font: {
+                            size: 14
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 产量与灌溉量关系图表
+        const yieldCtx = document.getElementById('yieldChart').getContext('2d');
+        new Chart(yieldCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: '小麦产量 vs 灌溉量',
+                    data: [
+                        {x: 20, y: 450},
+                        {x: 25, y: 500},
+                        {x: 30, y: 550},
+                        {x: 35, y: 580},
+                        {x: 40, y: 570},
+                        {x: 45, y: 550},
+                        {x: 50, y: 520}
+                    ],
+                    backgroundColor: '#0F766E'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '灌溉量 (m³/亩)'
+                        },
+                        min: 15,
+                        max: 55
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '产量 (kg/亩)'
+                        },
+                        min: 400,
+                        max: 600
+                    }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                xMin: 35,
+                                xMax: 35,
+                                yMin: 400,
+                                yMax: 600,
+                                borderColor: 'red',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    display: true,
+                                    content: '最佳灌溉量'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 模拟实时数据更新
+        function updateRealTimeData() {
+            const soilMoisture = document.getElementById('soilMoisture');
+            const temp = document.getElementById('temp');
+            const airHumidity = document.getElementById('airHumidity');
+            
+            // 模拟小幅波动
+            const currentMoisture = parseFloat(soilMoisture.textContent);
+            const newMoisture = (currentMoisture + (Math.random() - 0.5) * 0.4).toFixed(1);
+            soilMoisture.textContent = newMoisture + '%';
+            
+            const currentTemp = parseFloat(temp.textContent);
+            const newTemp = (currentTemp + (Math.random() - 0.5) * 0.2).toFixed(1);
+            temp.textContent = newTemp + '°C';
+            
+            const currentAirHumidity = parseFloat(airHumidity.textContent);
+            const newAirHumidity = (currentAirHumidity + (Math.random() - 0.5) * 0.5).toFixed(1);
+            airHumidity.textContent = newAirHumidity + '%';
+        }
+        
+        // 每30秒更新一次实时数据
+        setInterval(updateRealTimeData, 30000);
+        // 在 updateRealTimeData 函数后面添加以下代码：
+
+// ==================== 刷新数据功能 ====================
+
+// 刷新所有数据
+function refreshAllData() {
+    // 更新时间
+    updateDashboardTime();
+    // 显示加载状态
+    const refreshBtn = document.querySelector('button:has(.fa-refresh)');
+    if (refreshBtn) {
+        const originalText = refreshBtn.innerHTML;
+        refreshBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>刷新中...';
+        refreshBtn.disabled = true;
+        
+        // 模拟API调用延迟
+        setTimeout(() => {
+            // 1. 调用现有的updateRealTimeData函数
+            updateRealTimeData();
+            
+            // 2. 额外的小范围数据修改
+            // 土壤湿度：在±1%范围内变化
+            const soilMoistureElement = document.getElementById('soilMoisture');
+            if (soilMoistureElement) {
+                const currentMoisture = parseFloat(soilMoistureElement.textContent);
+                const randomChange = (Math.random() - 0.5) * 2; // -1到1之间的随机变化
+                const newMoisture = Math.max(60, Math.min(78, currentMoisture + randomChange));
+                soilMoistureElement.textContent = newMoisture.toFixed(1) + '%';
+                
+                // 更新变化百分比显示
+                const changeElement = soilMoistureElement.closest('.bg-white').querySelector('.soil-change');
+                if (changeElement) {
+                    const changeValue = randomChange > 0 ? `+${Math.abs(randomChange).toFixed(1)}%` : `-${Math.abs(randomChange).toFixed(1)}%`;
+                    const icon = changeElement.querySelector('#soilChangeIcon');
+                    if (icon) {
+                        icon.style.transform = randomChange > 0 ? 'rotate(0deg)' : 'rotate(180deg)';
+                        icon.style.filter = randomChange > 0 ? 'none' : 'hue-rotate(180deg)';
+                    }
+                    const valSpan = changeElement.querySelector('#soilChangeValue');
+                    if (valSpan) valSpan.textContent = changeValue;
+                }
+            }
+            
+            // 3. 环境温度：在±0.3°C范围内变化
+            const tempElement = document.getElementById('temp');
+            if (tempElement) {
+                const currentTemp = parseFloat(tempElement.textContent);
+                const randomChange = (Math.random() - 0.5) * 0.6; // -0.3到0.3之间的随机变化
+                const newTemp = Math.max(24, Math.min(28, currentTemp + randomChange));
+                tempElement.textContent = newTemp.toFixed(1) + '°C';
+                
+                // 更新变化百分比显示
+                const changeElement = tempElement.closest('.bg-white').querySelector('.text-danger');
+                if (changeElement) {
+                    const changeValue = randomChange > 0 ? 
+                        `+${Math.abs(randomChange).toFixed(1)}°C` : 
+                        `-${Math.abs(randomChange).toFixed(1)}°C`;
+                    const arrowIcon = randomChange > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+                    changeElement.innerHTML = `<i class="fa-solid ${arrowIcon} mr-1"></i> ${changeValue}`;
+                }
+            }
+            
+            // 4. 空气湿度：在±1.5%范围内变化
+            const airHumidityElement = document.getElementById('airHumidity');
+            if (airHumidityElement) {
+                const currentHumidity = parseFloat(airHumidityElement.textContent);
+                const randomChange = (Math.random() - 0.5) * 3; // -1.5到1.5之间的随机变化
+                const newHumidity = Math.max(40, Math.min(55, currentHumidity + randomChange));
+                airHumidityElement.textContent = newHumidity.toFixed(1) + '%';
+                
+                // 更新变化百分比显示
+                const changeElement = airHumidityElement.closest('.bg-white').querySelector('.text-danger');
+                if (changeElement) {
+                    const changeValue = randomChange > 0 ? 
+                        `+${Math.abs(randomChange).toFixed(1)}%` : 
+                        `-${Math.abs(randomChange).toFixed(1)}%`;
+                    const arrowIcon = randomChange > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+                    changeElement.innerHTML = `<i class="fa-solid ${arrowIcon} mr-1"></i> ${changeValue}`;
+                }
+            }
+            
+            // 5. 更新灌溉运行时间
+            const irrigationElements = document.querySelectorAll('.text-gray-500');
+            irrigationElements.forEach(element => {
+                if (element.textContent.includes('今日已运行')) {
+                    const match = element.textContent.match(/\d+\.?\d*/);
+                    if (match) {
+                        const currentHours = parseFloat(match[0]);
+                        const newHours = Math.min(12, currentHours + Math.random() * 0.1); // 增加0-0.1小时
+                        element.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> 今日已运行: ${newHours.toFixed(1)}小时`;
+                    }
+                }
+            });
+            
+            // 6. 恢复按钮状态
+            refreshBtn.innerHTML = originalText;
+            refreshBtn.disabled = false;
+            
+            // 7. 显示刷新完成通知
+            showRefreshNotification('数据刷新完成！');
+        }, 800); // 0.8秒延迟模拟网络请求
+    }
+ }
+
+ // 显示刷新通知
+ function showRefreshNotification(message) {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ' +
+                           'bg-green-100 border-green-400 text-green-700 border ' +
+                           'transform transition-all duration-300 translate-x-0 opacity-100';
+    
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fa-solid fa-check-circle mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // 3秒后自动消失
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    }, 3000);
+ }
+
+ // 为刷新按钮绑定事件
+ function bindRefreshButton() {
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn && !refreshBtn.hasAttribute('data-refresh-bound')) {
+        refreshBtn.setAttribute('data-refresh-bound', 'true');
+        refreshBtn.addEventListener('click', refreshAllData);
+    }
+ }
+ 
+ // 导出报告功能
+ function exportReport() {
+    const now = new Date();
+    const timeStr = now.toISOString();
+    const soil = document.getElementById('soilMoisture')?.textContent || '';
+    const temp = document.getElementById('temp')?.textContent || '';
+    const air = document.getElementById('airHumidity')?.textContent || '';
+    const ws = window.__realtimeWS;
+    const wsStatus = ws ? (ws.readyState === 1 ? 'connected' : ws.readyState) : 'none';
+    const irrigation = document.querySelector('#dashboard .bg-brand.text-brand')?.textContent || '';
+    const csv = `timestamp,soilMoisture,temperature,airHumidity,wsStatus,irrigation\n${timeStr},${soil},${temp},${air},${wsStatus},${irrigation}\n`;
+    const blob = new Blob([csv], {type: 'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `report_${timeStr.replace(/[:.]/g, '-')}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+ }
+ 
+ // 为导出按钮绑定事件
+ function bindExportButton() {
+    const expBtn = document.getElementById('exportBtn');
+    if (expBtn && !expBtn.hasAttribute('data-export-bound')) {
+        expBtn.setAttribute('data-export-bound', 'true');
+        expBtn.addEventListener('click', exportReport);
+    }
+ }
+ 
+ // 页面加载完成后绑定事件
+ if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function(){ bindRefreshButton(); bindExportButton(); bindReanalyzeButton(); bindAIQuery(); updateDashboardTime(); });
+ } else {
+    bindRefreshButton(); bindExportButton(); bindReanalyzeButton(); bindAIQuery(); updateDashboardTime();
+ }
+ // 绑定重新分析（AI建议）按钮
+ function bindReanalyzeButton() {
+    const btn = document.getElementById('reanalyzeBtn');
+    if (btn && !btn.hasAttribute('data-ai-bound')) {
+        btn.setAttribute('data-ai-bound', 'true');
+        btn.addEventListener('click', fetchAISuggestions);
+    }
+ }
+ 
+ // 绑定 AI 查询按钮和回车提交
+ function bindAIQuery() {
+    const btn = document.getElementById('aiQueryBtn');
+    const input = document.getElementById('aiQueryInput');
+    if (btn && !btn.hasAttribute('data-query-bound')) {
+        btn.setAttribute('data-query-bound', 'true');
+        btn.addEventListener('click', performAIQuery);
+    }
+    if (input && !input.hasAttribute('data-enter-bound')) {
+        input.setAttribute('data-enter-bound', 'true');
+        input.addEventListener('keydown', function(e){
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                performAIQuery();
+            }
+        });
+    }
+ }
+
+ // AI 服务配置
+const AI_API_ENDPOINT = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+const AI_API_KEY = '560754e4c6724d349667cb354affa0dd.fubqYW6UavfR14aO';
+
+// 通知栏操作
+function showAlert(msg, type='info') {
+    const bar = document.getElementById('alertBar');
+    if (!bar) return;
+    if (!msg) { 
+        bar.innerHTML = '消息框';
+        bar.classList.add('text-green-600');
+        return; 
+    }
+    bar.classList.remove('text-green-600');
+    let cls = 'bg-blue-100 text-blue-800';
+    if (type === 'warning') cls = 'bg-yellow-100 text-yellow-800';
+    if (type === 'error') cls = 'bg-red-100 text-red-800';
+    // keep outer green frame by not overriding bar classes here
+    bar.innerHTML = `<div class="p-3 rounded ${cls}">${msg}</div>`;
+}
+
+function clearAlert(){ showAlert(''); }
+
+// 执行用户查询
+async function performAIQuery() {
+    const input = document.getElementById('aiQueryInput');
+    const resultEl = document.getElementById('aiQueryResult');
+    if (!input || !resultEl) return;
+    const q = input.value.trim();
+    if (!q) { resultEl.textContent = '请输入问题'; return; }
+    resultEl.textContent = '查询中...';
+    try {
+        const payload = {
+            model: 'glm-5',
+            messages: [{ role: 'user', content: q }],
+            thinking: { type: 'enabled' },
+            max_tokens: 65536,
+            temperature: 1.0
+        };
+        const res = await fetch(AI_API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + AI_API_KEY
+            },
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('status ' + res.status);
+        const data = await res.json();
+        // 假定 response.choices[0].message.content
+        const text = data?.choices?.[0]?.message?.content || JSON.stringify(data);
+        resultEl.textContent = text;
+    } catch (e) {
+        console.error('AI query error', e);
+        resultEl.textContent = 'AI 查询失败';
+    }
+}
+
+// 请求 AI 生成灌溉建议并更新显示
+ async function fetchAISuggestions() {
+    const btn = document.getElementById('reanalyzeBtn');
+    if (!btn) return;
+    btn.disabled = true;
+    const original = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>分析中';
+
+    // 获取当前简单状态
+    const soil = document.getElementById('soilMoisture')?.textContent || '未知';
+    const temp = document.getElementById('temp')?.textContent || '未知';
+    const air = document.getElementById('airHumidity')?.textContent || '未知';
+
+    const userPrompt = `当前土壤湿度 ${soil}，环境温度 ${temp}，空气湿度 ${air}。请给出智能灌溉建议。`;
+
+    try {
+        const payload = {
+            model: 'glm-5',
+            messages: [
+                { role: 'user', content: userPrompt }
+            ],
+            thinking: { type: 'enabled' },
+            max_tokens: 65536,
+            temperature: 1.0
+        };
+        const res = await fetch(AI_API_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + AI_API_KEY
+            },
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('status ' + res.status);
+        const data = await res.json();
+        const text = data?.choices?.[0]?.message?.content || '';
+        // 简单解析为多条建议（按换行）
+        const lines = text.split(/\n+/).filter(l=>l.trim());
+        const suggestions = lines.map((line,i)=>({ title: `建议 ${i+1}`, text: line }));
+        renderSuggestions(suggestions);
+    } catch (err) {
+        console.error('fetchAISuggestions error', err);
+        showTempNotification('获取AI建议失败');
+    }
+    btn.disabled = false;
+    btn.innerHTML = original;
+ }
+
+ function renderSuggestions(list, ts) {
+    const container = document.getElementById('suggestionList');
+    if (!container) return;
+    container.innerHTML = '';
+    list.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'border-l-4 pl-4 py-2';
+        if (item.type) div.classList.add(`border-${item.type}`);
+        div.innerHTML = `<h4 class="font-bold mb-1">${item.title}</h4><p class="text-gray-600">${item.text}</p>`;
+        container.appendChild(div);
+    });
+    const info = document.getElementById('aiSuggestionInfo');
+    const timeStr = ts || new Date().toLocaleString();
+    if (info) info.textContent = `更新时间：${timeStr}`;
+ }
+
+ // 页面加载完成后绑定事件
+ if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindRefreshButton);
+ } else {
+    bindRefreshButton();
+ }
+    </script>
+    <!-- 引入用户数据管理系统 -->
+ <script src="userData.js"></script>
+
+ <!-- 用户交互功能 -->
+ <script>
+    // WebSocket 控制与仪表盘绑定脚本
+    (function(){
+        const statusBtn = () => document.getElementById('wsStatusBtn');
+        const reconnectBtn = () => document.getElementById('wsReconnectBtn');
+
+        function updateWSStatusUI(){
+            const btn = statusBtn();
+            const ws = window.__realtimeWS;
+            const connected = ws && ws.readyState === 1;
+            if (!btn) return;
+            btn.textContent = connected ? 'WS: 已连接' : 'WS: 未连接';
+            btn.classList.toggle('bg-green-600', connected);
+            btn.classList.toggle('bg-gray-400', !connected);
+        }
+
+        function createWebSocket(){
+            try { if (window.__realtimeWS && window.__realtimeWS.readyState < 2) window.__realtimeWS.close(); } catch(e){}
+            if (!window.WS_BASE) return updateWSStatusUI();
+            const token = (window.getAuthToken && window.getAuthToken()) || '';
+            const protocols = token ? ['Bearer ' + token] : undefined;
+            try {
+                const ws = protocols ? new WebSocket(window.WS_BASE, protocols) : new WebSocket(window.WS_BASE);
+                ws.onopen = function(){ updateWSStatusUI(); };
+                ws.onclose = function(){ updateWSStatusUI(); };
+                ws.onerror = function(){ updateWSStatusUI(); };
+                ws.onmessage = function(e){
+                    try {
+                        const msg = JSON.parse(e.data);
+                        // 触发页面其他监听器（与之前派发保持一致）
+                        document.dispatchEvent(new CustomEvent('sensor-data', { detail: msg }));
+                    } catch (err) { console.warn('WS message parse error', err); }
+                };
+                window.__realtimeWS = ws;
+            } catch (err) { console.warn('createWebSocket failed', err); }
+            updateWSStatusUI();
+        }
+
+        function reconnectWS(){ createWebSocket(); showTempNotification('正在重连...', 1200); }
+
+        function showTempNotification(text, ms){
+            const n = document.createElement('div');
+            n.className = 'fixed top-6 right-6 bg-black text-white px-4 py-2 rounded z-60 opacity-90';
+            n.textContent = text;
+            document.body.appendChild(n);
+            setTimeout(()=> n.remove(), ms||2000);
+        }
+
+        // 更新仪表盘显示（仅更新三个主要指标，断开时显示占位）
+        function setDashboardConnected(connected){
+            const soilEl = document.getElementById('soilMoisture');
+            const tempEl = document.getElementById('temp');
+            const airEl = document.getElementById('airHumidity');
+            if (!soilEl || !tempEl || !airEl) return;
+            if (!connected) {
+                soilEl.dataset._backup = soilEl.textContent;
+                tempEl.dataset._backup = tempEl.textContent;
+                airEl.dataset._backup = airEl.textContent;
+                soilEl.textContent = '—'; tempEl.textContent = '—'; airEl.textContent = '—';
+                soilEl.classList.add('opacity-60'); tempEl.classList.add('opacity-60'); airEl.classList.add('opacity-60');
+            } else {
+                if (soilEl.dataset._backup) soilEl.textContent = soilEl.dataset._backup;
+                if (tempEl.dataset._backup) tempEl.textContent = tempEl.dataset._backup;
+                if (airEl.dataset._backup) airEl.textContent = airEl.dataset._backup;
+                soilEl.classList.remove('opacity-60'); tempEl.classList.remove('opacity-60'); airEl.classList.remove('opacity-60');
+            }
+        }
+
+        // 当收到实时传感器数据时更新仪表盘
+        function updateDashboardWithSensor(msg){
+            if (!msg || !msg.type) return;
+            const payload = msg.payload || msg.data || {};
+            // 简单异常检测：湿度过低或过高
+            if (payload.soilMoisture != null) {
+                const m = parseFloat(payload.soilMoisture);
+                if (m < 20) showAlert('土壤湿度异常低', 'warning');
+                else if (m > 90) showAlert('土壤湿度异常高', 'warning');
+            }
+            const soilEl = document.getElementById('soilMoisture');
+            const tempEl = document.getElementById('temp');
+            const airEl = document.getElementById('airHumidity');
+            if (payload.soilMoisture != null && soilEl) soilEl.textContent = (parseFloat(payload.soilMoisture).toFixed(1) + '%');
+            if (payload.temperature != null && tempEl) tempEl.textContent = (parseFloat(payload.temperature).toFixed(1) + '°C');
+            if (payload.humidity != null && airEl) airEl.textContent = (parseFloat(payload.humidity).toFixed(1) + '%');
+            setDashboardConnected(true);
+        }
+
+        // 绑定按钮与事件
+        document.addEventListener('DOMContentLoaded', function(){
+            // 页面加载时默认未连接
+            setDashboardConnected(false);
+            // 绑定 UI 按钮
+            const sb = statusBtn(); const rb = reconnectBtn();
+            if (sb) sb.addEventListener('click', function(){ const ws = window.__realtimeWS; const s = ws ? ws.readyState : 3; alert('WebSocket 状态: ' + s); });
+            if (rb) rb.addEventListener('click', reconnectWS);
+
+            // 如果页面已有 WS（我们在 head 中初始化过），仅更新 UI；否则创建新的
+            if (window.__realtimeWS) {
+                updateWSStatusUI();
+            } else {
+                createWebSocket();
+            }
+
+            // 监听传感器数据事件
+            document.addEventListener('sensor-data', function(e){
+                updateDashboardWithSensor(e.detail);
+                updateDashboardTime();
+            });
+            // 初始加载时也刷新一次时间
+            updateDashboardTime();
+
+            // 定期同步 UI 状态（防止状态丢失）
+            setInterval(function(){
+                const ws = window.__realtimeWS;
+                const connected = ws && ws.readyState === 1;
+                updateWSStatusUI(); setDashboardConnected(connected);
+            }, 2000);
+        });
+    })();
+ </script>
+ <script>
+    // 初始化用户状态
+    function initUserState() {
+        const guestState = document.getElementById('guestState');
+        const userState = document.getElementById('userState');
+        const userName = document.getElementById('userName');
+        const userAvatar = document.getElementById('userAvatar');
+        const currentLocation = document.getElementById('currentLocation');
+        
+        // 检查是否有登录用户
+        if (UserSystem.currentUser) {
+            // 用户已登录
+            guestState.classList.add('hidden');
+            userState.classList.remove('hidden');
+            
+            // 更新用户名
+            if (userName) {
+                userName.textContent = UserSystem.currentUser.username || '用户';
+            }
+            
+            // 更新用户头像
+            if (userAvatar) {
+                // 使用默认头像或用户上传的头像
+                const avatarUrl = UserSystem.currentUser.avatar || 
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(UserSystem.currentUser.username || '用户')}&background=0F766E&color=fff&size=128`;
+                userAvatar.src = avatarUrl;
+            }
+            
+            // 更新当前位置
+            if (currentLocation && UserSystem.currentUser.defaultLocation) {
+                currentLocation.textContent = UserSystem.currentUser.defaultLocation.city || '西安市';
+            }
+        } else {
+            // 用户未登录
+            guestState.classList.remove('hidden');
+            userState.classList.add('hidden');
+        }
+    }
+    
+    // 登录按钮点击事件
+    document.getElementById('loginBtn')?.addEventListener('click', function() {
+        // 创建登录模态框
+        createLoginModal();
+    });
+    
+    // 注册按钮点击事件
+    document.getElementById('registerBtn')?.addEventListener('click', function() {
+        // 创建注册模态框
+        createRegisterModal();
+    });
+    
+    // 用户菜单按钮点击事件
+    document.getElementById('userMenuBtn')?.addEventListener('click', function() {
+        // 创建用户菜单
+        createUserMenu();
+    });
+    
+    // 位置选择器点击事件
+    document.getElementById('locationBtn')?.addEventListener('click', function() {
+        // 创建位置选择模态框
+        createLocationModal();
+    });
+    
+    // 创建登录模态框
+    function createLoginModal() {
+        const modalHTML = `
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold">用户登录</h3>
+                        <button class="close-modal text-gray-400 hover:text-gray-600">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="loginForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-medium mb-2" for="loginEmail">
+                                邮箱地址
+                            </label>
+                            <input type="email" id="loginEmail" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                                placeholder="请输入邮箱">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-700 text-sm font-medium mb-2" for="loginPassword">
+                                密码
+                            </label>
+                            <input type="password" id="loginPassword" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                                placeholder="请输入密码">
+                        </div>
+                        
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="rememberMe" class="mr-2">
+                                <label for="rememberMe" class="text-sm text-gray-600">记住我</label>
+                            </div>
+                            <button type="button" class="text-sm text-brand hover:text-brand/80">
+                                忘记密码？
+                            </button>
+                        </div>
+                        
+                        <button type="submit" 
+                            class="w-full bg-brand hover:bg-brand/90 text-white font-medium py-3 rounded-lg transition">
+                            登录
+                        </button>
+                    </form>
+                    
+                    <div class="mt-4 text-center">
+                        <p class="text-gray-600 text-sm">
+                            还没有账号？ 
+                            <button class="text-brand hover:text-brand/80 font-medium switch-to-register">
+                                立即注册
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // 添加到页面
+        const modalContainer = document.createElement('div');
+        modalContainer.id = 'loginModal';
+        modalContainer.innerHTML = modalHTML;
+        document.body.appendChild(modalContainer);
+        
+        // 关闭按钮事件
+        modalContainer.querySelector('.close-modal').addEventListener('click', function() {
+            document.body.removeChild(modalContainer);
+        });
+        
+        // 点击背景关闭
+        modalContainer.addEventListener('click', function(e) {
+            if (e.target === this) {
+                document.body.removeChild(modalContainer);
+            }
+        });
+        
+        // 切换到注册
+        modalContainer.querySelector('.switch-to-register')?.addEventListener('click', function() {
+            document.body.removeChild(modalContainer);
+            createRegisterModal();
+        });
+        
+        // 登录表单提交
+        modalContainer.querySelector('#loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // 使用UserSystem登录
+            const result = UserSystem.login(email, password);
+            
+            if (result.success) {
+                // 登录成功
+                document.body.removeChild(modalContainer);
+                initUserState(); // 更新界面状态
+                
+                // 显示成功提示
+                showNotification('登录成功！', 'success');
+            } else {
+                // 登录失败
+                showNotification(result.message || '登录失败，请检查邮箱和密码', 'error');
+            }
+        });
+    }
+    
+    // 创建注册模态框
+    function createRegisterModal() {
+        const modalHTML = `
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold">用户注册</h3>
+                        <button class="close-modal text-gray-400 hover:text-gray-600">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="registerForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-medium mb-2" for="registerUsername">
+                                用户名
+                            </label>
+                            <input type="text" id="registerUsername" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                                placeholder="请输入用户名">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-medium mb-2" for="registerEmail">
+                                邮箱地址
+                            </label>
+                            <input type="email" id="registerEmail" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                                placeholder="请输入邮箱">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-700 text-sm font-medium mb-2" for="registerPassword">
+                                密码
+                            </label>
+                            <input type="password" id="registerPassword" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                                placeholder="请输入密码（至少6位）">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-700 text-sm font-medium mb-2" for="registerConfirmPassword">
+                                确认密码
+                            </label>
+                            <input type="password" id="registerConfirmPassword" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                                placeholder="请再次输入密码">
+                        </div>
+                        
+                        <button type="submit" 
+                            class="w-full bg-brand hover:bg-brand/90 text-white font-medium py-3 rounded-lg transition">
+                            注册
+                        </button>
+                    </form>
+                    
+                    <div class="mt-4 text-center">
+                        <p class="text-gray-600 text-sm">
+                            已有账号？ 
+                            <button class="text-brand hover:text-brand/80 font-medium switch-to-login">
+                                立即登录
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // 添加到页面
+        const modalContainer = document.createElement('div');
+        modalContainer.id = 'registerModal';
+        modalContainer.innerHTML = modalHTML;
+        document.body.appendChild(modalContainer);
+        
+        // 关闭按钮事件
+        modalContainer.querySelector('.close-modal').addEventListener('click', function() {
+            document.body.removeChild(modalContainer);
+        });
+        
+        // 点击背景关闭
+        modalContainer.addEventListener('click', function(e) {
+            if (e.target === this) {
+                document.body.removeChild(modalContainer);
+            }
+        });
+        
+        // 切换到登录
+        modalContainer.querySelector('.switch-to-login')?.addEventListener('click', function() {
+            document.body.removeChild(modalContainer);
+            createLoginModal();
+        });
+        
+        // 注册表单提交
+        modalContainer.querySelector('#registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            // 验证密码
+            if (password !== confirmPassword) {
+                showNotification('两次输入的密码不一致', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('密码长度至少6位', 'error');
+                return;
+            }
+            
+            // 使用UserSystem注册
+            const result = UserSystem.register(username, email, password);
+            
+            if (result.success) {
+                // 注册成功
+                document.body.removeChild(modalContainer);
+                
+                // 显示成功提示
+                showNotification('注册成功！', 'success');
+                
+                // 自动登录
+                const loginResult = UserSystem.login(email, password);
+                if (loginResult.success) {
+                    initUserState(); // 更新界面状态
+                }
+            } else {
+                // 注册失败
+                showNotification(result.message || '注册失败，请稍后重试', 'error');
+            }
+        });
+    }
+    
+    // 创建用户菜单
+    function createUserMenu() {
+        const modalHTML = `
+            <div class="fixed inset-0 bg-transparent z-50" id="userMenuOverlay">
+                <div class="absolute right-4 top-16 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 z-50"
+                     id="userMenuDropdown">
+                    <div class="px-4 py-3 border-b">
+                        <p class="text-sm font-medium">${UserSystem.currentUser?.username || '用户'}</p>
+                        <p class="text-xs text-gray-500 truncate">${UserSystem.currentUser?.email || ''}</p>
+                    </div>
+                    
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="fa-solid fa-user mr-2 w-4"></i>个人中心
+                    </a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="fa-solid fa-cog mr-2 w-4"></i>系统设置
+                    </a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <i class="fa-solid fa-question-circle mr-2 w-4"></i>帮助中心
+                    </a>
+                    
+                    <div class="border-t">
+                        <button id="logoutBtn" class="block w-full text-left px-4 py-2 text-sm text-danger hover:bg-red-50">
+                            <i class="fa-solid fa-sign-out-alt mr-2 w-4"></i>退出登录
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // 移除已存在的菜单
+        const existingMenu = document.getElementById('userMenuOverlay');
+        if (existingMenu) {
+            document.body.removeChild(existingMenu);
+            return;
+        }
+        
+        // 添加到页面
+        const menuContainer = document.createElement('div');
+        menuContainer.id = 'userMenuOverlay';
+        menuContainer.innerHTML = modalHTML;
+        document.body.appendChild(menuContainer);
+        
+        // 点击其他地方关闭菜单
+        setTimeout(() => {
+            function closeMenu(e) {
+                const menu = document.getElementById('userMenuDropdown');
+                if (menu && !menu.contains(e.target) && !document.getElementById('userMenuBtn')?.contains(e.target)) {
+                    document.body.removeChild(menuContainer);
+                    document.removeEventListener('click', closeMenu);
+                }
+            }
+            document.addEventListener('click', closeMenu);
+        }, 10);
+        
+        // 退出登录
+        document.getElementById('logoutBtn')?.addEventListener('click', function() {
+            UserSystem.logout();
+            document.body.removeChild(menuContainer);
+            initUserState(); // 更新界面状态
+            showNotification('已退出登录', 'info');
+        });
+    }
+    
+    // 创建位置选择模态框
+    function createLocationModal() {
+        // 获取所有位置
+        const locations = UserSystem.locations || [];
+        const currentUser = UserSystem.currentUser;
+        const currentLocation = currentUser?.defaultLocation || locations.find(loc => loc.default) || locations[0];
+        
+        let locationsHTML = '';
+        locations.forEach(location => {
+            const isSelected = location.id === currentLocation?.id;
+            locationsHTML += `
+                <div class="location-item ${isSelected ? 'bg-brand/10 border-brand' : 'hover:bg-gray-50'} 
+                    border rounded-lg p-3 cursor-pointer transition mb-2 relative"
+                    data-location-id="${location.id}">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-medium">${location.city}</h4>
+                            <p class="text-sm text-gray-500">${location.province} · ${location.country}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            ${isSelected ? '<i class="fa-solid fa-check text-brand"></i>' : ''}
+                            <button class="delete-location text-red-500 hover:text-red-700 p-2 rounded-full" title="删除此位置" data-location-id="${location.id}">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1">${location.climateZone || '未知'} | 海拔: ${location.coordinates?.alt || '--'}m</p>
+                </div>
+            `;
+        });
+        
+        const modalHTML = `
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4 max-h-[80vh] overflow-hidden flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold">选择位置</h3>
+                        <button class="close-modal text-gray-400 hover:text-gray-600">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <input type="text" id="locationSearch" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                            placeholder="搜索城市...">
+                    </div>
+                    
+                    <div class="flex-1 overflow-y-auto mb-4">
+                        <div id="locationList">
+                            ${locationsHTML}
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between pt-4 border-t">
+                        <button class="add-location text-brand hover:text-brand/80">
+                            <i class="fa-solid fa-plus mr-1"></i>添加新位置
+                        </button>
+                        <button class="close-modal px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition">
+                            取消
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // 添加到页面
+        const modalContainer = document.createElement('div');
+        modalContainer.id = 'locationModal';
+        modalContainer.innerHTML = modalHTML;
+        document.body.appendChild(modalContainer);
+        
+        // 关闭按钮事件
+        modalContainer.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.body.removeChild(modalContainer);
+            });
+        });
+        
+        // 点击背景关闭
+        modalContainer.addEventListener('click', function(e) {
+            if (e.target === this) {
+                document.body.removeChild(modalContainer);
+            }
+        });
+        
+        // 位置搜索功能
+        const searchInput = document.getElementById('locationSearch');
+        const locationList = document.getElementById('locationList');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const items = locationList.querySelectorAll('.location-item');
+            
+            items.forEach(item => {
+                const city = item.querySelector('h4').textContent.toLowerCase();
+                const province = item.querySelector('p').textContent.toLowerCase();
+                const shouldShow = city.includes(searchTerm) || province.includes(searchTerm);
+                item.style.display = shouldShow ? 'block' : 'none';
+            });
+        });
+        
+        // 位置选择
+        modalContainer.querySelectorAll('.location-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const locationId = this.getAttribute('data-location-id');
+                const location = locations.find(loc => loc.id === locationId);
+                
+                if (location) {
+                    // 更新当前用户默认位置
+                    if (currentUser) {
+                        UserSystem.updateUserInfo(currentUser.id, { defaultLocation: location });
+                    }
+                    
+                    // 更新UI
+                    document.getElementById('currentLocation').textContent = location.city;
+                    
+                    // 显示成功提示
+                    showNotification(`位置已切换到: ${location.city}`, 'success');
+                    
+                    // 关闭模态框
+                    document.body.removeChild(modalContainer);
+                }
+            });
+        });
+
+        // 删除位置按钮事件（阻止冒泡以免触发选择）
+        modalContainer.querySelectorAll('.delete-location').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const locationId = this.getAttribute('data-location-id');
+                if (!locationId) return;
+
+                if (!confirm('确定要删除该位置吗？此操作不可撤销。')) return;
+
+                const success = UserSystem.removeLocation(locationId);
+                if (success) {
+                    // 从列表中移除DOM元素
+                    const item = modalContainer.querySelector(`[data-location-id="${locationId}"]`);
+                    if (item) item.remove();
+
+                    // 如果删除后有新的默认位置，更新当前用户和界面
+                    if (UserSystem.currentUser) {
+                        const newDefault = UserSystem.locations.find(loc => loc.isDefault) || UserSystem.locations[0] || null;
+                        UserSystem.updateUserInfo(UserSystem.currentUser.id, { defaultLocation: newDefault });
+                        if (newDefault) {
+                            document.getElementById('currentLocation').textContent = newDefault.city;
+                        } else {
+                            document.getElementById('currentLocation').textContent = '未设置';
+                        }
+                    } else {
+                        const newDefault = UserSystem.locations.find(loc => loc.isDefault) || UserSystem.locations[0] || null;
+                        if (newDefault) document.getElementById('currentLocation').textContent = newDefault.city;
+                    }
+
+                    showNotification('位置已删除', 'success');
+                } else {
+                    showNotification('删除失败', '请重试或刷新页面后重试');
+                }
+            });
+        });
+        
+        // 添加新位置
+        modalContainer.querySelector('.add-location')?.addEventListener('click', function() {
+            // 创建添加位置模态框
+            createAddLocationModal();
+            document.body.removeChild(modalContainer);
+        });
+    }
+    
+    // 创建添加位置模态框
+    function createAddLocationModal() {
+        // 生成省份选项
+        let provinceOptions = '';
+        UserSystem.provinces.forEach(province => {
+            provinceOptions += `<option value="${province.code}">${province.name}</option>`;
+        });
+        
+        const modalHTML = `
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold">添加新位置</h3>
+                        <button class="close-modal text-gray-400 hover:text-gray-600">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="addLocationForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-medium mb-2" for="locationProvince">
+                                省份
+                            </label>
+                            <select id="locationProvince" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent">
+                                <option value="">请选择省份</option>
+                                ${provinceOptions}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-medium mb-2" for="locationCity">
+                                城市
+                            </label>
+                            <select id="locationCity" required disabled
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent">
+                                <option value="">请先选择省份</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4 grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2" for="locationLat">
+                                    纬度
+                                </label>
+                                <input type="number" step="0.000001" id="locationLat" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                                    placeholder="例如: 34.3416">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2" for="locationLng">
+                                    经度
+                                </label>
+                                <input type="number" step="0.000001" id="locationLng" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+                                    placeholder="例如: 108.9398">
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-4">
+                            <button type="button" id="detectLocation" 
+                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded-lg transition">
+                                <i class="fa-solid fa-location-crosshairs mr-1"></i>自动检测
+                            </button>
+                            <button type="submit" 
+                                class="flex-1 bg-brand hover:bg-brand/90 text-white font-medium py-2 rounded-lg transition">
+                                添加位置
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        
+        // 添加到页面
+        const modalContainer = document.createElement('div');
+        modalContainer.id = 'addLocationModal';
+        modalContainer.innerHTML = modalHTML;
+        document.body.appendChild(modalContainer);
+        
+        // 关闭按钮事件
+        modalContainer.querySelector('.close-modal').addEventListener('click', function() {
+            document.body.removeChild(modalContainer);
+        });
+        
+        // 点击背景关闭
+        modalContainer.addEventListener('click', function(e) {
+            if (e.target === this) {
+                document.body.removeChild(modalContainer);
+            }
+        });
+        
+        // 省份选择变化时加载城市
+        const provinceSelect = document.getElementById('locationProvince');
+        const citySelect = document.getElementById('locationCity');
+        
+        provinceSelect.addEventListener('change', function() {
+            const provinceCode = this.value;
+            
+            if (!provinceCode) {
+                citySelect.innerHTML = '<option value="">请先选择省份</option>';
+                citySelect.disabled = true;
+                return;
+            }
+            
+            // 获取该省份的城市
+            const cities = UserSystem.cities[provinceCode] || [];
+            
+            let cityOptions = '<option value="">请选择城市</option>';
+            cities.forEach(city => {
+                cityOptions += `<option value="${city.code}">${city.name}</option>`;
+            });
+            
+            citySelect.innerHTML = cityOptions;
+            citySelect.disabled = false;
+        });
+        
+        // 自动检测位置
+        document.getElementById('detectLocation').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        document.getElementById('locationLat').value = position.coords.latitude.toFixed(6);
+                        document.getElementById('locationLng').value = position.coords.longitude.toFixed(6);
+                    },
+                    function(error) {
+                        showNotification('无法获取位置信息，请手动输入', 'error');
+                    }
+                );
+            } else {
+                showNotification('浏览器不支持地理位置功能', 'error');
+            }
+        });
+        
+        // 表单提交
+        modalContainer.querySelector('#addLocationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const provinceCode = provinceSelect.value;
+            const cityCode = citySelect.value;
+            const lat = document.getElementById('locationLat').value;
+            const lng = document.getElementById('locationLng').value;
+            
+            if (!provinceCode || !cityCode) {
+                showNotification('请选择省份和城市', 'error');
+                return;
+            }
+            
+            if (!lat || !lng) {
+                showNotification('请输入坐标信息', 'error');
+                return;
+            }
+            
+            // 获取省份和城市名称
+            const province = UserSystem.provinces.find(p => p.code === provinceCode)?.name || '';
+            const city = UserSystem.cities[provinceCode]?.find(c => c.code === cityCode)?.name || '';
+            
+            // 根据城市判断气候区域
+            let climateZone = '未知';
+            for (const [zone, data] of Object.entries(UserSystem.climateZones)) {
+                if (data.cities.includes(city)) {
+                    climateZone = zone;
+                    break;
+                }
+            }
+            
+            // 创建新位置
+            const newLocation = {
+                country: '中国',
+                province: province,
+                city: city,
+                coordinates: {
+                    lat: parseFloat(lat),
+                    lng: parseFloat(lng),
+                    alt: 0 // 默认海拔
+                },
+                climateZone: climateZone,
+                isDefault: UserSystem.locations.length === 0 // 如果是第一个位置，设为默认
+            };
+            
+            // 添加到系统
+            const addedLocation = UserSystem.addLocation(newLocation);
+            
+            // 如果用户已登录，更新用户的默认位置
+            if (UserSystem.currentUser && newLocation.isDefault) {
+                UserSystem.updateUserInfo(UserSystem.currentUser.id, { defaultLocation: addedLocation });
+            }
+            
+            // 更新UI
+            document.getElementById('currentLocation').textContent = city;
+            
+            // 显示成功提示
+            showNotification(`位置已添加: ${city}`, 'success');
+            
+            // 关闭模态框
+            document.body.removeChild(modalContainer);
+        });
+    }
+    
+    // 显示通知
+    function showNotification(message, type = 'info') {
+        // 移除已存在的通知
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+        
+        const typeClasses = {
+            success: 'bg-green-100 border-green-400 text-green-700',
+            error: 'bg-red-100 border-red-400 text-red-700',
+            warning: 'bg-yellow-100 border-yellow-400 text-yellow-700',
+            info: 'bg-blue-100 border-blue-400 text-blue-700'
+        };
+        
+        const iconClasses = {
+            success: 'fa-check-circle',
+            error: 'fa-times-circle',
+            warning: 'fa-exclamation-triangle',
+            info: 'fa-info-circle'
+        };
+        
+        const notificationHTML = `
+            <div class="notification fixed top-4 right-4 z-50 px-4 py-3 rounded-lg border ${typeClasses[type]} 
+                 shadow-lg transition-all duration-300 transform translate-x-0 opacity-100">
+                <div class="flex items-center">
+                    <i class="fa-solid ${iconClasses[type]} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            </div>
+        `;
+        
+        const notificationContainer = document.createElement('div');
+        notificationContainer.innerHTML = notificationHTML;
+        document.body.appendChild(notificationContainer);
+        
+        // 3秒后自动消失
+        setTimeout(() => {
+            notificationContainer.querySelector('.notification').style.opacity = '0';
+            notificationContainer.querySelector('.notification').style.transform = 'translateX(100%)';
+            
+            setTimeout(() => {
+                if (notificationContainer.parentNode) {
+                    notificationContainer.remove();
+                }
+            }, 300);
+        }, 3000);
+    }
+    
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        initUserState();
+        
+        // 如果有登录用户，检查是否过期（24小时）
+        if (UserSystem.currentUser) {
+            const lastLogin = new Date(UserSystem.currentUser.lastLogin);
+            const now = new Date();
+            const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
+            
+            if (hoursDiff > 24) {
+                // 自动登出
+                UserSystem.logout();
+                initUserState();
+                showNotification('登录已过期，请重新登录', 'info');
+            }
+        }
+    });
+</script>
+</body>
+</html>
