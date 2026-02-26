@@ -2484,6 +2484,8 @@ async function performAIQuery() {
     </script>
     <!-- 引入用户数据管理系统 -->
  <script src="userData.js"></script>
+ <script src="forgot-password.js"></script>
+
 
  <!-- 用户交互功能 -->
  <script>
@@ -2502,16 +2504,49 @@ async function performAIQuery() {
             btn.classList.toggle('bg-gray-400', !connected);
         }
 
+        // WebSocket 重连计数器
+        window.__wsReconnectCount = 0;
+        window.__maxWSReconnectAttempts = 5;
+        window.__wsReconnectDelay = 5000; // 5秒
+        window.__wsReconnectTimer = null;
+        
         function createWebSocket(){
             try { if (window.__realtimeWS && window.__realtimeWS.readyState < 2) window.__realtimeWS.close(); } catch(e){}
             if (!window.WS_BASE) return updateWSStatusUI();
+            
+            // 检查重连次数是否超过限制
+            if (window.__wsReconnectCount >= window.__maxWSReconnectAttempts) {
+                console.warn('已达到最大WebSocket重连次数限制');
+                return updateWSStatusUI();
+            }
+            
             const token = (window.getAuthToken && window.getAuthToken()) || '';
             const protocols = token ? ['Bearer ' + token] : undefined;
             try {
                 const ws = protocols ? new WebSocket(window.WS_BASE, protocols) : new WebSocket(window.WS_BASE);
-                ws.onopen = function(){ updateWSStatusUI(); };
-                ws.onclose = function(){ updateWSStatusUI(); };
-                ws.onerror = function(){ updateWSStatusUI(); };
+                ws.onopen = function(){ 
+                    // 连接成功，重置重连计数器
+                    window.__wsReconnectCount = 0;
+                    if (window.__wsReconnectTimer) {
+                        clearTimeout(window.__wsReconnectTimer);
+                        window.__wsReconnectTimer = null;
+                    }
+                    updateWSStatusUI(); 
+                };
+                ws.onclose = function(){ 
+                    updateWSStatusUI(); 
+                    // 如果不是手动关闭，则尝试重连
+                    if (window.__wsReconnectCount < window.__maxWSReconnectAttempts) {
+                        window.__wsReconnectCount++;
+                        window.__wsReconnectTimer = setTimeout(function() {
+                            createWebSocket();
+                        }, window.__wsReconnectDelay);
+                    }
+                };
+                ws.onerror = function(){ 
+                    updateWSStatusUI(); 
+                    console.warn('WebSocket连接错误');
+                };
                 ws.onmessage = function(e){
                     try {
                         const msg = JSON.parse(e.data);
@@ -2524,7 +2559,15 @@ async function performAIQuery() {
             updateWSStatusUI();
         }
 
-        function reconnectWS(){ createWebSocket(); showTempNotification('正在重连...', 1200); }
+        function reconnectWS(){ 
+            // 检查重连次数是否超过限制
+            if (window.__wsReconnectCount >= window.__maxWSReconnectAttempts) {
+                showTempNotification('已达到最大重连次数限制，请刷新页面重试', 3000);
+                return;
+            }
+            createWebSocket(); 
+            showTempNotification('正在重连...', 1200); 
+        }
 
         function showTempNotification(text, ms){
             const n = document.createElement('div');
@@ -2705,7 +2748,7 @@ async function performAIQuery() {
                                 <input type="checkbox" id="rememberMe" class="mr-2">
                                 <label for="rememberMe" class="text-sm text-gray-600">记住我</label>
                             </div>
-                            <button type="button" class="text-sm text-brand hover:text-brand/80">
+                            <button type="button" id="forgotPasswordBtn" class="text-sm text-brand hover:text-brand/80">
                                 忘记密码？
                             </button>
                         </div>
@@ -2751,16 +2794,22 @@ async function performAIQuery() {
             document.body.removeChild(modalContainer);
             createRegisterModal();
         });
+
+        // 忘记密码按钮点击事件
+        modalContainer.querySelector('#forgotPasswordBtn')?.addEventListener('click', function() {
+            document.body.removeChild(modalContainer);
+            createForgotPasswordModal();
+        });
         
         // 登录表单提交
-        modalContainer.querySelector('#loginForm').addEventListener('submit', function(e) {
+        modalContainer.querySelector('#loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
             // 使用UserSystem登录
-            const result = UserSystem.login(email, password);
+            const result = await UserSystem.login(email, password);
             
             if (result.success) {
                 // 登录成功
